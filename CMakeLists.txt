@@ -4,7 +4,12 @@ project(space-invaders-3d)
 
 add_subdirectory(lib)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+set(SRC_FILES
+    src/main.cpp
+    src/Bitmap3D.cpp
+)
+
+add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE

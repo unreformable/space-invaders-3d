@@ -1,3 +1,5 @@
+#include "Bitmap3D.hpp"
+
 #include "glad/glad.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
@@ -5,8 +7,6 @@
 #include "glm/mat4x4.hpp"
 #include "SDL2/SDL.h"
 
-#include <array>
-#include <algorithm>    // reverse
 #include <cassert>
 #include <iostream>
 
@@ -29,19 +29,6 @@ const char* fs_source =
     "{\n"
     "   FragColor = vec4(0.8);\n"
     "}\0";
-
-const int small_invader_bitmap_w = 11;
-const int small_invader_bitmap_h = 8;
-std::array<bool, small_invader_bitmap_w * small_invader_bitmap_h> small_invader_bitmap = {
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
-    0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,
-    0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-    0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1,
-    1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1,
-    0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0
-};
 
 int main()
 {
@@ -84,18 +71,20 @@ int main()
     glViewport(0, 0, window_w, window_h);
 
     // SMALL INVADER
+    Bitmap3D bitmap;
+    bitmap.Load("../assets/bitmaps/small_invader");
     // Reverse bitmap, so bitmap's y goes with mesh's y
-    std::reverse(small_invader_bitmap.begin(), small_invader_bitmap.end());
+    bitmap.ReverseEachFrame();
 
-    const int possible_vert_count = small_invader_bitmap_w * small_invader_bitmap_h * 6 * 2 * 3;
+    const int possible_vert_count = bitmap.Width() * bitmap.Height() * 6 * 2 * 3;
     glm::vec3 possible_vert[possible_vert_count];
     int vert_count = 0;
-    for(int y = 0; y < small_invader_bitmap_h; y++)
+    for(int y = 0; y < bitmap.Height(); y++)
     {
-        for(int x = 0; x < small_invader_bitmap_w; ++x)
+        for(int x = 0; x < bitmap.Width(); ++x)
         {
-            const int idx = y*small_invader_bitmap_w + x;
-            if(small_invader_bitmap[idx] == 0)
+            const int idx = y*bitmap.Width() + x;
+            if(bitmap.Data()[idx] == '0')
                 continue;
             
             // Front
@@ -117,7 +106,7 @@ int main()
             vert_count += 6;
 
             // Left
-            if(x == 0 || small_invader_bitmap[y*small_invader_bitmap_w + x - 1] == 0)
+            if(x == 0 || bitmap.Data()[y*bitmap.Width() + x - 1] == '0')
             {
                 possible_vert[vert_count + 0] = glm::vec3(x, y, -1);
                 possible_vert[vert_count + 1] = glm::vec3(x, y, 0);
@@ -129,7 +118,7 @@ int main()
             }
 
             // Right
-            if(x == small_invader_bitmap_w-1 || small_invader_bitmap[y*small_invader_bitmap_w + x + 1] == 0)
+            if(x == bitmap.Width()-1 || bitmap.Data()[y*bitmap.Width() + x + 1] == '0')
             {
                 possible_vert[vert_count + 0] = glm::vec3(x + 1, y, 0);
                 possible_vert[vert_count + 1] = glm::vec3(x + 1, y, -1);
@@ -141,7 +130,7 @@ int main()
             }
 
             // Top
-            if(y == small_invader_bitmap_h-1 || small_invader_bitmap[(y+1)*small_invader_bitmap_w + x] == 0)
+            if(y == bitmap.Height()-1 || bitmap.Data()[(y+1)*bitmap.Width() + x] == '0')
             {
                 possible_vert[vert_count + 0] = glm::vec3(x, y + 1, 0);
                 possible_vert[vert_count + 1] = glm::vec3(x + 1, y + 1, 0);
@@ -153,7 +142,7 @@ int main()
             }
 
             // Bottom
-            if(y == 0 || small_invader_bitmap[(y-1)*small_invader_bitmap_w + x] == 0)
+            if(y == 0 || bitmap.Data()[(y-1)*bitmap.Width() + x] == '0')
             {
                 possible_vert[vert_count + 0] = glm::vec3(x + 1, y, 0);
                 possible_vert[vert_count + 1] = glm::vec3(x, y, 0);
