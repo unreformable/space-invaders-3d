@@ -1,10 +1,30 @@
 #include "Utils.hpp"
 
+#include <fstream>
+#include <iostream>
+
 
 
 namespace Utils
 {
-    void BitmapFrameToVertices(const Bitmap3D& bitmap, const uint32_t frame, uint32_t& offset, glm::vec3* vertices)
+    void Load(const char* file_path, std::string& target)
+    {
+        std::ifstream file(file_path, std::ios::in | std::ios::binary);
+
+        if(file.is_open() == false)
+        {
+            std::cerr << "Could not open file from given path: " << file_path << std::endl;
+            return;
+        }
+
+        file.seekg(0, std::ios::end);
+        target.resize(file.tellg());
+        file.seekg(0, std::ios::beg);
+        file.read(&target[0], target.size());
+        file.close();
+    }
+
+    void BitmapFrameToVertices(const Bitmap3D& bitmap, uint32_t frame, uint32_t& offset, glm::vec3* vertices)
     {
         const uint32_t pixel_count = bitmap.Width() * bitmap.Height();
         const uint32_t pixel_offset = frame * pixel_count;

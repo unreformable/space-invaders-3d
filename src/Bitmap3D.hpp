@@ -13,6 +13,7 @@ public:
 
     void Load(const char* file_path);
     void ReverseEachFrame();
+    
     inline uint32_t Frames() const { return m_Frames; }
     inline uint32_t Width() const { return m_Width; }
     inline uint32_t Height() const { return m_Height; }

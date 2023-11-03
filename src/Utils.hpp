@@ -8,5 +8,6 @@
 
 namespace Utils
 {
-    void BitmapFrameToVertices(const Bitmap3D& bitmap, const uint32_t frame, uint32_t& offset, glm::vec3* vertices);
+    void Load(const char* file_path, std::string& target);
+    void BitmapFrameToVertices(const Bitmap3D& bitmap, uint32_t frame, uint32_t& offset, glm::vec3* vertices);
 }

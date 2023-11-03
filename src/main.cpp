@@ -1,6 +1,7 @@
-#include "Animation.hpp"
 #include "Bitmap3D.hpp"
 #include "CoordinateSystem.hpp"
+#include "Model.hpp"
+#include "Program.hpp"
 #include "Utils.hpp"
 
 #include "glad/glad.h"
@@ -14,24 +15,6 @@
 #include <iostream>
 
 
-
-const char* vs_source =
-    "#version 450 core\n"
-    "layout(location = 0) in vec3 vPos;\n"
-    "uniform mat4 uView;\n"
-    "uniform mat4 uProj;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = uProj * uView * vec4(vPos, 1.0);\n"
-    "}\0";
-
-const char* fs_source =
-    "#version 450 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(0.8);\n"
-    "}\0";
 
 int main()
 {
@@ -79,45 +62,15 @@ int main()
     // Reverse bitmap, so bitmap's y goes with mesh's y
     bitmap.ReverseEachFrame();
 
-    Animation animation;
-    animation.CreateFromBitmap(bitmap);
+    Model small_invader;
+    small_invader.CreateFromBitmap(bitmap);
 
-    GLint success = GL_TRUE;
-    GLchar info_log[512];
-    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &vs_source, NULL);
-    glCompileShader(vs);
-    glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-    if(success == GL_FALSE)
-    {
-        glGetShaderInfoLog(vs, 512, NULL, info_log);
-        std::cerr << "Could not compile vertex shader\n" << info_log << std::endl;
-    }
-    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fs_source, NULL);
-    glCompileShader(fs);
-    glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-    if(success == GL_FALSE)
-    {
-        glGetShaderInfoLog(fs, 512, NULL, info_log);
-        std::cerr << "Could not compile fragment shader\n" << info_log << std::endl;
-    }
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
-    glLinkProgram(program);
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if(success == GL_FALSE)
-    {
-        glGetProgramInfoLog(program, 512, NULL, info_log);
-        std::cerr << "Could not link program\n" << info_log << std::endl;
-    }
-    glDeleteShader(vs);
-    glDeleteShader(fs);
+    Program program;
+    program.Load("../assets/shaders/model.vs", "../assets/shaders/model.fs");
 
     // CAMERA
     const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 100.0f);
-    glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "uProj"), 1, GL_FALSE, glm::value_ptr(proj));
+    program.SetUniform("uProj", proj);
 
     bool key_states[SDL_NUM_SCANCODES]{};
     glm::vec3 camera_pos = glm::vec3(5, 5, 20);
@@ -175,16 +128,17 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         const glm::mat4 view = glm::lookAtRH(camera_pos, camera_pos + camera_forward, kWorldUp);
-        glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "uView"), 1, GL_FALSE, glm::value_ptr(view));
-        glUseProgram(program);
-        animation.Render(program, 0);
+        program.SetUniform("uView", view);
+        program.Use();
+        program.SetUniform("uWorld", glm::mat4(1.0f));
+        small_invader.Render(0);
 
         SDL_GL_SwapWindow(window);
 
         const GLenum error_code = glGetError();
         if(error_code != GL_NONE)
         {
-            std::cerr << "OpenGL error. Error code: " << std::hex << error_code << std::endl;
+            std::cerr << "OpenGL error. Error code: 0x" << std::hex << error_code << std::endl;
         }
     }
 
