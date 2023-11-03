@@ -5,6 +5,8 @@
 #include "glm/mat4x4.hpp"
 #include "SDL2/SDL.h"
 
+#include <array>
+#include <algorithm>    // reverse
 #include <cassert>
 #include <iostream>
 
@@ -28,8 +30,22 @@ const char* fs_source =
     "   FragColor = vec4(0.8);\n"
     "}\0";
 
+const int small_invader_bitmap_w = 11;
+const int small_invader_bitmap_h = 8;
+std::array<bool, small_invader_bitmap_w * small_invader_bitmap_h> small_invader_bitmap = {
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+    0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,
+    0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+    0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+    1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1,
+    0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0
+};
+
 int main()
 {
+    // SETUP
     const int window_w = 600;
     const int window_h = 800;
 
@@ -67,30 +83,106 @@ int main()
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glViewport(0, 0, window_w, window_h);
 
-    GLfloat vertices[]{
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.5f,  0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f
-    };
+    // SMALL INVADER
+    // Reverse bitmap, so bitmap's y goes with mesh's y
+    std::reverse(small_invader_bitmap.begin(), small_invader_bitmap.end());
+
+    const int possible_vert_count = small_invader_bitmap_w * small_invader_bitmap_h * 6 * 2 * 3;
+    glm::vec3 possible_vert[possible_vert_count];
+    int vert_count = 0;
+    for(int y = 0; y < small_invader_bitmap_h; y++)
+    {
+        for(int x = 0; x < small_invader_bitmap_w; ++x)
+        {
+            const int idx = y*small_invader_bitmap_w + x;
+            if(small_invader_bitmap[idx] == 0)
+                continue;
+            
+            // Front
+            possible_vert[vert_count + 0] = glm::vec3(x, y, 0);
+            possible_vert[vert_count + 1] = glm::vec3(x + 1, y, 0);
+            possible_vert[vert_count + 2] = glm::vec3(x + 1, y + 1, 0);
+            possible_vert[vert_count + 3] = glm::vec3(x + 1, y + 1, 0);
+            possible_vert[vert_count + 4] = glm::vec3(x, y + 1, 0);
+            possible_vert[vert_count + 5] = glm::vec3(x, y, 0);
+            vert_count += 6;
+
+            // Back
+            possible_vert[vert_count + 0] = glm::vec3(x + 1, y, -1);
+            possible_vert[vert_count + 1] = glm::vec3(x, y, -1);
+            possible_vert[vert_count + 2] = glm::vec3(x, y + 1, -1);
+            possible_vert[vert_count + 3] = glm::vec3(x, y + 1, -1);
+            possible_vert[vert_count + 4] = glm::vec3(x + 1, y + 1, -1);
+            possible_vert[vert_count + 5] = glm::vec3(x + 1, y, -1);
+            vert_count += 6;
+
+            // Left
+            if(x == 0 || small_invader_bitmap[y*small_invader_bitmap_w + x - 1] == 0)
+            {
+                possible_vert[vert_count + 0] = glm::vec3(x, y, -1);
+                possible_vert[vert_count + 1] = glm::vec3(x, y, 0);
+                possible_vert[vert_count + 2] = glm::vec3(x, y + 1, 0);
+                possible_vert[vert_count + 3] = glm::vec3(x, y + 1, 0);
+                possible_vert[vert_count + 4] = glm::vec3(x, y + 1, -1);
+                possible_vert[vert_count + 5] = glm::vec3(x, y, -1);
+                vert_count += 6;
+            }
+
+            // Right
+            if(x == small_invader_bitmap_w-1 || small_invader_bitmap[y*small_invader_bitmap_w + x + 1] == 0)
+            {
+                possible_vert[vert_count + 0] = glm::vec3(x + 1, y, 0);
+                possible_vert[vert_count + 1] = glm::vec3(x + 1, y, -1);
+                possible_vert[vert_count + 2] = glm::vec3(x + 1, y + 1, -1);
+                possible_vert[vert_count + 3] = glm::vec3(x + 1, y + 1, -1);
+                possible_vert[vert_count + 4] = glm::vec3(x + 1, y + 1, 0);
+                possible_vert[vert_count + 5] = glm::vec3(x + 1, y, 0);
+                vert_count += 6;
+            }
+
+            // Top
+            if(y == small_invader_bitmap_h-1 || small_invader_bitmap[(y+1)*small_invader_bitmap_w + x] == 0)
+            {
+                possible_vert[vert_count + 0] = glm::vec3(x, y + 1, 0);
+                possible_vert[vert_count + 1] = glm::vec3(x + 1, y + 1, 0);
+                possible_vert[vert_count + 2] = glm::vec3(x + 1, y + 1, -1);
+                possible_vert[vert_count + 3] = glm::vec3(x + 1, y + 1, -1);
+                possible_vert[vert_count + 4] = glm::vec3(x, y + 1, -1);
+                possible_vert[vert_count + 5] = glm::vec3(x, y + 1, 0);
+                vert_count += 6;
+            }
+
+            // Bottom
+            if(y == 0 || small_invader_bitmap[(y-1)*small_invader_bitmap_w + x] == 0)
+            {
+                possible_vert[vert_count + 0] = glm::vec3(x + 1, y, 0);
+                possible_vert[vert_count + 1] = glm::vec3(x, y, 0);
+                possible_vert[vert_count + 2] = glm::vec3(x, y, -1);
+                possible_vert[vert_count + 3] = glm::vec3(x, y, -1);
+                possible_vert[vert_count + 4] = glm::vec3(x + 1, y, -1);
+                possible_vert[vert_count + 5] = glm::vec3(x + 1, y, 0);
+                vert_count += 6;
+            }
+        }
+    }
 
     GLuint vbo;
     glCreateBuffers(1, &vbo);
-    glNamedBufferStorage(vbo, sizeof(vertices), vertices, 0);
+    glNamedBufferStorage(vbo, sizeof(possible_vert), possible_vert, 0);
 
-    GLuint indices[]{
-        0, 1, 2,
-        2, 3, 0
-    };
+    // GLuint indices[]{
+    //     0, 1, 2,
+    //     2, 3, 0
+    // };
 
-    GLuint ebo;
-    glCreateBuffers(1, &ebo);
-    glNamedBufferStorage(ebo, sizeof(indices), indices, 0);
+    // GLuint ebo;
+    // glCreateBuffers(1, &ebo);
+    // glNamedBufferStorage(ebo, sizeof(indices), indices, 0);
 
     GLuint vao;
     glCreateVertexArrays(1, &vao);
     glVertexArrayVertexBuffer(vao, 0, vbo, 0, 3*sizeof(GLfloat));
-    glVertexArrayElementBuffer(vao, ebo);
+    // glVertexArrayElementBuffer(vao, ebo);
     glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
     glVertexArrayAttribBinding(vao, 0, 0);
     glEnableVertexArrayAttrib(vao, 0);
@@ -127,14 +219,17 @@ int main()
     }
     glDeleteShader(vs);
     glDeleteShader(fs);
+
+    // CAMERA
     const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 100.0f);
     glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "uProj"), 1, GL_FALSE, glm::value_ptr(proj));
 
     bool key_states[SDL_NUM_SCANCODES]{};
-    glm::vec3 camera_pos = glm::vec3(0, 0, 4);
+    glm::vec3 camera_pos = glm::vec3(5, 5, 20);
     float camera_pitch = 0;
     float camera_yaw = 0;
 
+    // MAIN LOOP
     bool running = true;
     while(running == true)
     {
@@ -188,7 +283,7 @@ int main()
         glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "uView"), 1, GL_FALSE, glm::value_ptr(view));
         glUseProgram(program);
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+        glDrawArrays(GL_TRIANGLES, 0, vert_count);
 
         SDL_GL_SwapWindow(window);
 
@@ -199,6 +294,7 @@ int main()
         }
     }
 
+    SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
     
