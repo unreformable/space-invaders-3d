@@ -1,4 +1,7 @@
+#include "Animation.hpp"
 #include "Bitmap3D.hpp"
+#include "CoordinateSystem.hpp"
+#include "Utils.hpp"
 
 #include "glad/glad.h"
 #include "glm/gtc/type_ptr.hpp"
@@ -76,105 +79,8 @@ int main()
     // Reverse bitmap, so bitmap's y goes with mesh's y
     bitmap.ReverseEachFrame();
 
-    const int possible_vert_count = bitmap.Width() * bitmap.Height() * 6 * 2 * 3;
-    glm::vec3 possible_vert[possible_vert_count];
-    int vert_count = 0;
-    for(int y = 0; y < bitmap.Height(); y++)
-    {
-        for(int x = 0; x < bitmap.Width(); ++x)
-        {
-            const int idx = y*bitmap.Width() + x;
-            if(bitmap.Data()[idx] == '0')
-                continue;
-            
-            // Front
-            possible_vert[vert_count + 0] = glm::vec3(x, y, 0);
-            possible_vert[vert_count + 1] = glm::vec3(x + 1, y, 0);
-            possible_vert[vert_count + 2] = glm::vec3(x + 1, y + 1, 0);
-            possible_vert[vert_count + 3] = glm::vec3(x + 1, y + 1, 0);
-            possible_vert[vert_count + 4] = glm::vec3(x, y + 1, 0);
-            possible_vert[vert_count + 5] = glm::vec3(x, y, 0);
-            vert_count += 6;
-
-            // Back
-            possible_vert[vert_count + 0] = glm::vec3(x + 1, y, -1);
-            possible_vert[vert_count + 1] = glm::vec3(x, y, -1);
-            possible_vert[vert_count + 2] = glm::vec3(x, y + 1, -1);
-            possible_vert[vert_count + 3] = glm::vec3(x, y + 1, -1);
-            possible_vert[vert_count + 4] = glm::vec3(x + 1, y + 1, -1);
-            possible_vert[vert_count + 5] = glm::vec3(x + 1, y, -1);
-            vert_count += 6;
-
-            // Left
-            if(x == 0 || bitmap.Data()[y*bitmap.Width() + x - 1] == '0')
-            {
-                possible_vert[vert_count + 0] = glm::vec3(x, y, -1);
-                possible_vert[vert_count + 1] = glm::vec3(x, y, 0);
-                possible_vert[vert_count + 2] = glm::vec3(x, y + 1, 0);
-                possible_vert[vert_count + 3] = glm::vec3(x, y + 1, 0);
-                possible_vert[vert_count + 4] = glm::vec3(x, y + 1, -1);
-                possible_vert[vert_count + 5] = glm::vec3(x, y, -1);
-                vert_count += 6;
-            }
-
-            // Right
-            if(x == bitmap.Width()-1 || bitmap.Data()[y*bitmap.Width() + x + 1] == '0')
-            {
-                possible_vert[vert_count + 0] = glm::vec3(x + 1, y, 0);
-                possible_vert[vert_count + 1] = glm::vec3(x + 1, y, -1);
-                possible_vert[vert_count + 2] = glm::vec3(x + 1, y + 1, -1);
-                possible_vert[vert_count + 3] = glm::vec3(x + 1, y + 1, -1);
-                possible_vert[vert_count + 4] = glm::vec3(x + 1, y + 1, 0);
-                possible_vert[vert_count + 5] = glm::vec3(x + 1, y, 0);
-                vert_count += 6;
-            }
-
-            // Top
-            if(y == bitmap.Height()-1 || bitmap.Data()[(y+1)*bitmap.Width() + x] == '0')
-            {
-                possible_vert[vert_count + 0] = glm::vec3(x, y + 1, 0);
-                possible_vert[vert_count + 1] = glm::vec3(x + 1, y + 1, 0);
-                possible_vert[vert_count + 2] = glm::vec3(x + 1, y + 1, -1);
-                possible_vert[vert_count + 3] = glm::vec3(x + 1, y + 1, -1);
-                possible_vert[vert_count + 4] = glm::vec3(x, y + 1, -1);
-                possible_vert[vert_count + 5] = glm::vec3(x, y + 1, 0);
-                vert_count += 6;
-            }
-
-            // Bottom
-            if(y == 0 || bitmap.Data()[(y-1)*bitmap.Width() + x] == '0')
-            {
-                possible_vert[vert_count + 0] = glm::vec3(x + 1, y, 0);
-                possible_vert[vert_count + 1] = glm::vec3(x, y, 0);
-                possible_vert[vert_count + 2] = glm::vec3(x, y, -1);
-                possible_vert[vert_count + 3] = glm::vec3(x, y, -1);
-                possible_vert[vert_count + 4] = glm::vec3(x + 1, y, -1);
-                possible_vert[vert_count + 5] = glm::vec3(x + 1, y, 0);
-                vert_count += 6;
-            }
-        }
-    }
-
-    GLuint vbo;
-    glCreateBuffers(1, &vbo);
-    glNamedBufferStorage(vbo, sizeof(possible_vert), possible_vert, 0);
-
-    // GLuint indices[]{
-    //     0, 1, 2,
-    //     2, 3, 0
-    // };
-
-    // GLuint ebo;
-    // glCreateBuffers(1, &ebo);
-    // glNamedBufferStorage(ebo, sizeof(indices), indices, 0);
-
-    GLuint vao;
-    glCreateVertexArrays(1, &vao);
-    glVertexArrayVertexBuffer(vao, 0, vbo, 0, 3*sizeof(GLfloat));
-    // glVertexArrayElementBuffer(vao, ebo);
-    glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
-    glVertexArrayAttribBinding(vao, 0, 0);
-    glEnableVertexArrayAttrib(vao, 0);
+    Animation animation;
+    animation.CreateFromBitmap(bitmap);
 
     GLint success = GL_TRUE;
     GLchar info_log[512];
@@ -254,7 +160,7 @@ int main()
              glm::sin(camera_pitch) * glm::cos(camera_yaw),
             -glm::cos(camera_pitch) * glm::cos(camera_yaw)
         );
-        const glm::vec3 camera_right = glm::normalize(glm::cross(camera_forward, glm::vec3(0, 1, 0)));
+        const glm::vec3 camera_right = glm::normalize(glm::cross(camera_forward, kWorldUp));
 
         const float speed = 0.1f;
         glm::vec3 camera_vel{};
@@ -268,11 +174,10 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const glm::mat4 view = glm::lookAtRH(camera_pos, camera_pos + camera_forward, glm::vec3(0, 1, 0));
+        const glm::mat4 view = glm::lookAtRH(camera_pos, camera_pos + camera_forward, kWorldUp);
         glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "uView"), 1, GL_FALSE, glm::value_ptr(view));
         glUseProgram(program);
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, vert_count);
+        animation.Render(program, 0);
 
         SDL_GL_SwapWindow(window);
 

@@ -7,6 +7,7 @@ add_subdirectory(lib)
 set(SRC_FILES
     src/main.cpp
     src/Bitmap3D.cpp
+    src/Utils.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
