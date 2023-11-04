@@ -24,84 +24,101 @@ namespace Utils
         file.close();
     }
 
-    void BitmapFrameToVertices(const Bitmap3D& bitmap, uint32_t frame, uint32_t& offset, Vertex* vertices)
+    void VerticesFromBitmapFrame(const Bitmap3D& bitmap, uint32_t frame, uint32_t& vertex_count, Vertex* vertices)
     {
         const uint32_t pixel_count = bitmap.Width() * bitmap.Height();
         const uint32_t pixel_offset = frame * pixel_count;
 
+        const glm::vec3 to_center_adjust = glm::vec3(
+            -static_cast<float>(bitmap.Width()) / 2.0f,
+             0.0f,
+             static_cast<float>(bitmap.Height()) / 2.0f
+        );
+
+        const glm::vec3 left_bottom_front  = glm::vec3(0, 0,  0);
+        const glm::vec3 right_bottom_front = glm::vec3(1, 0,  0);
+        const glm::vec3 left_top_front     = glm::vec3(0, 1,  0);
+        const glm::vec3 right_top_front    = glm::vec3(1, 1,  0);
+        const glm::vec3 left_bottom_back   = glm::vec3(0, 0, -1);
+        const glm::vec3 right_bottom_back  = glm::vec3(1, 0, -1);
+        const glm::vec3 left_top_back      = glm::vec3(0, 1, -1);
+        const glm::vec3 right_top_back     = glm::vec3(1, 1, -1);
+
         for(uint32_t i = 0; i < pixel_count; i++)
         {
-            const uint32_t y = i / bitmap.Width();
-            const uint32_t x = i % bitmap.Width();
+            const int x = i % bitmap.Width();
+            const int y = i / bitmap.Width();
+
+            const glm::vec3 offset = glm::vec3(x, 0, -y) + to_center_adjust;
 
             if(bitmap.Data()[i + pixel_offset] == '0')
                 continue;
             
             // Front
-            vertices[offset + 0] = Vertex{ glm::vec3(x,     y,     0), glm::vec3(0, 0, 1) };
-            vertices[offset + 1] = Vertex{ glm::vec3(x + 1, y,     0), glm::vec3(0, 0, 1) };
-            vertices[offset + 2] = Vertex{ glm::vec3(x + 1, y + 1, 0), glm::vec3(0, 0, 1) };
-            vertices[offset + 3] = Vertex{ glm::vec3(x + 1, y + 1, 0), glm::vec3(0, 0, 1) };
-            vertices[offset + 4] = Vertex{ glm::vec3(x,     y + 1, 0), glm::vec3(0, 0, 1) };
-            vertices[offset + 5] = Vertex{ glm::vec3(x,     y,     0), glm::vec3(0, 0, 1) };
-            offset += 6;
+            if(y == 0 || bitmap.Data()[(y-1)*bitmap.Width() + x] == '0')
+            {
+                vertices[vertex_count + 0] = Vertex{ left_bottom_front  + offset, glm::vec3(0, 0, 1) };
+                vertices[vertex_count + 1] = Vertex{ right_bottom_front + offset, glm::vec3(0, 0, 1) };
+                vertices[vertex_count + 2] = Vertex{ right_top_front    + offset, glm::vec3(0, 0, 1) };
+                vertices[vertex_count + 3] = Vertex{ right_top_front    + offset, glm::vec3(0, 0, 1) };
+                vertices[vertex_count + 4] = Vertex{ left_top_front     + offset, glm::vec3(0, 0, 1) };
+                vertices[vertex_count + 5] = Vertex{ left_bottom_front  + offset, glm::vec3(0, 0, 1) };
+                vertex_count += 6;
+            }
 
             // Back
-            vertices[offset + 0] = Vertex{ glm::vec3(x + 1, y,     -1), glm::vec3(0, 0, -1) };
-            vertices[offset + 1] = Vertex{ glm::vec3(x,     y,     -1), glm::vec3(0, 0, -1) };
-            vertices[offset + 2] = Vertex{ glm::vec3(x,     y + 1, -1), glm::vec3(0, 0, -1) };
-            vertices[offset + 3] = Vertex{ glm::vec3(x,     y + 1, -1), glm::vec3(0, 0, -1) };
-            vertices[offset + 4] = Vertex{ glm::vec3(x + 1, y + 1, -1), glm::vec3(0, 0, -1) };
-            vertices[offset + 5] = Vertex{ glm::vec3(x + 1, y,     -1), glm::vec3(0, 0, -1) };
-            offset += 6;
+            if(y == bitmap.Height()-1 || bitmap.Data()[(y+1)*bitmap.Width() + x] == '0')
+            {
+                vertices[vertex_count + 0] = Vertex{ right_bottom_back + offset, glm::vec3(0, 0, -1) };
+                vertices[vertex_count + 1] = Vertex{ left_bottom_back  + offset, glm::vec3(0, 0, -1) };
+                vertices[vertex_count + 2] = Vertex{ left_top_back     + offset, glm::vec3(0, 0, -1) };
+                vertices[vertex_count + 3] = Vertex{ left_top_back     + offset, glm::vec3(0, 0, -1) };
+                vertices[vertex_count + 4] = Vertex{ right_top_back    + offset, glm::vec3(0, 0, -1) };
+                vertices[vertex_count + 5] = Vertex{ right_bottom_back + offset, glm::vec3(0, 0, -1) };
+                vertex_count += 6;
+            }
 
             // Left
             if(x == 0 || bitmap.Data()[y*bitmap.Width() + x - 1] == '0')
             {
-                vertices[offset + 0] = Vertex{ glm::vec3(x, y,     -1), glm::vec3(-1, 0, 0) };
-                vertices[offset + 1] = Vertex{ glm::vec3(x, y,      0), glm::vec3(-1, 0, 0) };
-                vertices[offset + 2] = Vertex{ glm::vec3(x, y + 1,  0), glm::vec3(-1, 0, 0) };
-                vertices[offset + 3] = Vertex{ glm::vec3(x, y + 1,  0), glm::vec3(-1, 0, 0) };
-                vertices[offset + 4] = Vertex{ glm::vec3(x, y + 1, -1), glm::vec3(-1, 0, 0) };
-                vertices[offset + 5] = Vertex{ glm::vec3(x, y,     -1), glm::vec3(-1, 0, 0) };
-                offset += 6;
+                vertices[vertex_count + 0] = Vertex{ left_bottom_back  + offset, glm::vec3(-1, 0, 0) };
+                vertices[vertex_count + 1] = Vertex{ left_bottom_front + offset, glm::vec3(-1, 0, 0) };
+                vertices[vertex_count + 2] = Vertex{ left_top_front    + offset, glm::vec3(-1, 0, 0) };
+                vertices[vertex_count + 3] = Vertex{ left_top_front    + offset, glm::vec3(-1, 0, 0) };
+                vertices[vertex_count + 4] = Vertex{ left_top_back     + offset, glm::vec3(-1, 0, 0) };
+                vertices[vertex_count + 5] = Vertex{ left_bottom_back  + offset, glm::vec3(-1, 0, 0) };
+                vertex_count += 6;
             }
 
             // Right
             if(x == bitmap.Width()-1 || bitmap.Data()[y*bitmap.Width() + x + 1] == '0')
             {
-                vertices[offset + 0] = Vertex{ glm::vec3(x + 1, y,      0), glm::vec3(1, 0, 0) };
-                vertices[offset + 1] = Vertex{ glm::vec3(x + 1, y,     -1), glm::vec3(1, 0, 0) };
-                vertices[offset + 2] = Vertex{ glm::vec3(x + 1, y + 1, -1), glm::vec3(1, 0, 0) };
-                vertices[offset + 3] = Vertex{ glm::vec3(x + 1, y + 1, -1), glm::vec3(1, 0, 0) };
-                vertices[offset + 4] = Vertex{ glm::vec3(x + 1, y + 1,  0), glm::vec3(1, 0, 0) };
-                vertices[offset + 5] = Vertex{ glm::vec3(x + 1, y,      0), glm::vec3(1, 0, 0) };
-                offset += 6;
+                vertices[vertex_count + 0] = Vertex{ right_bottom_front + offset, glm::vec3(1, 0, 0) };
+                vertices[vertex_count + 1] = Vertex{ right_bottom_back  + offset, glm::vec3(1, 0, 0) };
+                vertices[vertex_count + 2] = Vertex{ right_top_back     + offset, glm::vec3(1, 0, 0) };
+                vertices[vertex_count + 3] = Vertex{ right_top_back     + offset, glm::vec3(1, 0, 0) };
+                vertices[vertex_count + 4] = Vertex{ right_top_front    + offset, glm::vec3(1, 0, 0) };
+                vertices[vertex_count + 5] = Vertex{ right_bottom_front + offset, glm::vec3(1, 0, 0) };
+                vertex_count += 6;
             }
 
             // Top
-            if(y == bitmap.Height()-1 || bitmap.Data()[(y+1)*bitmap.Width() + x] == '0')
-            {
-                vertices[offset + 0] = Vertex{ glm::vec3(x,     y + 1,  0), glm::vec3(0, 1, 0) };
-                vertices[offset + 1] = Vertex{ glm::vec3(x + 1, y + 1,  0), glm::vec3(0, 1, 0) };
-                vertices[offset + 2] = Vertex{ glm::vec3(x + 1, y + 1, -1), glm::vec3(0, 1, 0) };
-                vertices[offset + 3] = Vertex{ glm::vec3(x + 1, y + 1, -1), glm::vec3(0, 1, 0) };
-                vertices[offset + 4] = Vertex{ glm::vec3(x,     y + 1, -1), glm::vec3(0, 1, 0) };
-                vertices[offset + 5] = Vertex{ glm::vec3(x,     y + 1,  0), glm::vec3(0, 1, 0) };
-                offset += 6;
-            }
+            vertices[vertex_count + 0] = Vertex{ left_top_front  + offset, glm::vec3(0, 1, 0) };
+            vertices[vertex_count + 1] = Vertex{ right_top_front + offset, glm::vec3(0, 1, 0) };
+            vertices[vertex_count + 2] = Vertex{ right_top_back  + offset, glm::vec3(0, 1, 0) };
+            vertices[vertex_count + 3] = Vertex{ right_top_back  + offset, glm::vec3(0, 1, 0) };
+            vertices[vertex_count + 4] = Vertex{ left_top_back   + offset, glm::vec3(0, 1, 0) };
+            vertices[vertex_count + 5] = Vertex{ left_top_front  + offset, glm::vec3(0, 1, 0) };
+            vertex_count += 6;
 
             // Bottom
-            if(y == 0 || bitmap.Data()[(y-1)*bitmap.Width() + x] == '0')
-            {
-                vertices[offset + 0] = Vertex{ glm::vec3(x + 1, y,  0), glm::vec3(0, -1, 0) };
-                vertices[offset + 1] = Vertex{ glm::vec3(x,     y,  0), glm::vec3(0, -1, 0) };
-                vertices[offset + 2] = Vertex{ glm::vec3(x,     y, -1), glm::vec3(0, -1, 0) };
-                vertices[offset + 3] = Vertex{ glm::vec3(x,     y, -1), glm::vec3(0, -1, 0) };
-                vertices[offset + 4] = Vertex{ glm::vec3(x + 1, y, -1), glm::vec3(0, -1, 0) };
-                vertices[offset + 5] = Vertex{ glm::vec3(x + 1, y,  0), glm::vec3(0, -1, 0) };
-                offset += 6;
-            }
+            vertices[vertex_count + 0] = Vertex{ right_bottom_front + offset, glm::vec3(0, -1, 0) };
+            vertices[vertex_count + 1] = Vertex{ left_bottom_front  + offset, glm::vec3(0, -1, 0) };
+            vertices[vertex_count + 2] = Vertex{ left_bottom_back   + offset, glm::vec3(0, -1, 0) };
+            vertices[vertex_count + 3] = Vertex{ left_bottom_back   + offset, glm::vec3(0, -1, 0) };
+            vertices[vertex_count + 4] = Vertex{ right_bottom_back  + offset, glm::vec3(0, -1, 0) };
+            vertices[vertex_count + 5] = Vertex{ right_bottom_front + offset, glm::vec3(0, -1, 0) };
+            vertex_count += 6;
         }
     }
 }

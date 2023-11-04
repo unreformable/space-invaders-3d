@@ -68,7 +68,6 @@ int main()
 
     // GAME OBJECTS
     Invaders invaders;
-    float accum{};
 
     LaserCannon cannon;
     cannon.SetPosition({0, 0, 50});
@@ -114,6 +113,7 @@ int main()
         if(key_states[SDL_SCANCODE_A]) cannon.Move(22.0f * -kWorldRight * dt);
 
         // invaders.Move(dt * glm::vec3(5.0f, 0, 0));
+        static float accum{};
         const float move_delay = 1.0f;
         if(accum > move_delay)
         {
@@ -125,8 +125,8 @@ int main()
             accum += dt;
         }
 
-        camera.SetPosition(cannon.Position() + glm::vec3(0, 50, 50));
-        camera.LookAt(cannon.Position() + glm::vec3(0, 0, -30));
+        camera.SetPosition(cannon.Position() + glm::vec3(0, 35, 38));
+        camera.LookAt(cannon.Position() + glm::vec3(0, 0, -35));
 
         // RENDERING
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

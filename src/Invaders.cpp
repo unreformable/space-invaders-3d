@@ -27,7 +27,6 @@ Invaders::Invaders()
 
         glm::mat4 transform = glm::mat4(1.0f);
         transform = glm::translate(transform, offset);
-        transform = glm::rotate(transform, glm::radians(-90.0f), kWorldRight);
         m_InvaderTransforms.emplace_back(std::move(transform));
     }
 }

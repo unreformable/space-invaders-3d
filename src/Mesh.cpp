@@ -32,7 +32,7 @@ void Mesh::CreateFromBitmap(const Bitmap3D& bitmap)
     for(uint32_t i = 0; i < bitmap.Frames(); i++)
     {
         m_VertexOffsets[i] = offset;
-        Utils::BitmapFrameToVertices(bitmap, i, offset, possible_vert);
+        Utils::VerticesFromBitmapFrame(bitmap, i, offset, possible_vert);
         m_VertexCounts[i] = offset - m_VertexOffsets[i];
     }
 
