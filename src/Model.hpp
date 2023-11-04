@@ -16,7 +16,8 @@ public:
     ~Model();
 
     void CreateFromBitmap(const Bitmap3D& bitmap);
-    void Render(uint32_t frame);
+    void Prepare() const;
+    void Render(uint32_t frame) const;
     
     inline uint32_t Frames() const { return m_Frames; }
 
@@ -30,6 +31,6 @@ private:
     uint32_t m_Frames;
     GLuint m_Vao;
     GLuint m_Vbo;
-    std::vector<uint32_t> m_VerticesCounts;
-    std::vector<uint32_t> m_VerticesOffsets;
+    std::vector<uint32_t> m_VertexCounts;
+    std::vector<uint32_t> m_VertexOffsets;
 };

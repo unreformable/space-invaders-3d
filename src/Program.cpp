@@ -67,12 +67,12 @@ void Program::Load(const char* vs_file_path, const char* fs_file_path)
     m_Handle = program;
 }
 
-void Program::Use()
+void Program::Use() const
 {
     glUseProgram(m_Handle);
 }
 
-void Program::SetUniform(const char* name, const glm::mat4& mat4)
+void Program::SetUniform(const char* name, const glm::mat4& mat4) const
 {
     glProgramUniformMatrix4fv(m_Handle, glGetUniformLocation(m_Handle, name), 1, GL_FALSE, glm::value_ptr(mat4));
 }

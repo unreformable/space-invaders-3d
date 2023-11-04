@@ -1,5 +1,6 @@
 #include "Bitmap3D.hpp"
 #include "CoordinateSystem.hpp"
+#include "Invaders.hpp"
 #include "Model.hpp"
 #include "Program.hpp"
 #include "Utils.hpp"
@@ -48,6 +49,8 @@ int main()
     // V-sync on
     SDL_GL_SetSwapInterval(1);
 
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -56,26 +59,20 @@ int main()
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glViewport(0, 0, window_w, window_h);
 
-    // SMALL INVADER
-    Bitmap3D bitmap;
-    bitmap.Load("../assets/bitmaps/small_invader");
-    // Reverse bitmap, so bitmap's y goes with mesh's y
-    bitmap.ReverseEachFrame();
-
-    Model small_invader;
-    small_invader.CreateFromBitmap(bitmap);
-
     Program program;
     program.Load("../assets/shaders/model.vs", "../assets/shaders/model.fs");
 
     // CAMERA
-    const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 100.0f);
+    const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 200.0f);
     program.SetUniform("uProj", proj);
 
     bool key_states[SDL_NUM_SCANCODES]{};
-    glm::vec3 camera_pos = glm::vec3(5, 5, 20);
+    glm::vec3 camera_pos = glm::vec3(5, 15, 30);
     float camera_pitch = 0;
     float camera_yaw = 0;
+
+    // GAME OBJECTS
+    Invaders invaders;
 
     // MAIN LOOP
     bool running = true;
@@ -127,11 +124,10 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const glm::mat4 view = glm::lookAtRH(camera_pos, camera_pos + camera_forward, kWorldUp);
+        glm::mat4 view = glm::lookAtRH(camera_pos, camera_pos + camera_forward, kWorldUp);
         program.SetUniform("uView", view);
         program.Use();
-        program.SetUniform("uWorld", glm::mat4(1.0f));
-        small_invader.Render(0);
+        invaders.Render(program);
 
         SDL_GL_SwapWindow(window);
 

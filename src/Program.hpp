@@ -12,8 +12,8 @@ public:
     ~Program();
 
     void Load(const char* vs_file_path, const char* fs_file_path);
-    void Use();
-    void SetUniform(const char* name, const glm::mat4& mat4);
+    void Use() const;
+    void SetUniform(const char* name, const glm::mat4& mat4) const;
 
 private:
     Program(const Program& other);
