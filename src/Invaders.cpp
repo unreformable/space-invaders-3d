@@ -1,5 +1,7 @@
 #include "Invaders.hpp"
 
+#include "CoordinateSystem.hpp"
+
 #include "glm/ext/matrix_transform.hpp"
 
 
@@ -12,27 +14,40 @@ Invaders::Invaders()
     bitmap.ReverseEachFrame();
     m_SmallInvader.CreateFromBitmap(bitmap);
 
-    m_InvaderCount.x = 11;
-    m_InvaderCount.y = 5;
+    m_Rows = 5;
+    m_Cols = 11;
 
-    const uint32_t invader_count = m_InvaderCount.x * m_InvaderCount.y;
+    const uint32_t invader_count = m_Rows * m_Cols;
     m_InvaderTransforms.reserve(invader_count);
     for(uint32_t i = 0; i < invader_count; i++)
     {
-        const uint32_t x = i % m_InvaderCount.x;
-        const uint32_t y = i / m_InvaderCount.x;
+        const float x = i % m_Cols;
+        const float z = i / m_Cols;
 
-        const glm::vec3 distance = 13.0f * glm::vec3(x, y, 0);
+        const glm::vec3 offset = 12.0f * glm::vec3(x, 0, -z);
 
         glm::mat4 transform = glm::mat4(1.0f);
-        transform = glm::translate(transform, distance);
+        transform = glm::translate(transform, offset);
+        transform = glm::rotate(transform, glm::radians(-90.0f), kWorldRight);
         m_InvaderTransforms.emplace_back(std::move(transform));
     }
 }
 
 void Invaders::Move(const glm::vec3& distance)
 {
+    // const uint32_t first = row * m_Cols;
+    // const uint32_t last = (row + 1) * m_Cols;
 
+    // for(uint32_t i = first; i < last; i++)
+    // {
+    //     glm::mat4& transform = m_InvaderTransforms[i];
+    //     transform = glm::translate(transform, distance);
+    // }
+
+    for(glm::mat4& transform : m_InvaderTransforms)
+    {
+        transform = glm::translate(transform, distance);
+    }
 }
 
 void Invaders::Render(const Program& program) const

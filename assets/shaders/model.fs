@@ -7,10 +7,10 @@ out vec4 FragColor;
 void main()
 {
    vec3 light_col = vec3(0.8);
-   vec3 light_pos = vec3(0, 3000, 2000);
-   vec3 light_dir = normalize(light_pos - vec3(0.0));
+   vec3 light_pos = vec3(0, 3000, 1500);
+   vec3 dir_to_light = normalize(light_pos);
 
-   float diff = max(dot(fNormal, light_dir), 0.1);
+   float diff = max(dot(fNormal, dir_to_light), 0.0);
    vec3 diffuse = diff * light_col;
 
    FragColor = vec4(diffuse, 1.0);

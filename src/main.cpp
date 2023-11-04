@@ -35,6 +35,10 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
@@ -73,8 +77,11 @@ int main()
 
     // GAME OBJECTS
     Invaders invaders;
+    float accum{};
 
     // MAIN LOOP
+    float dt{};
+    uint64_t start = SDL_GetPerformanceCounter();
     bool running = true;
     while(running == true)
     {
@@ -122,6 +129,19 @@ int main()
         if(key_states[SDL_SCANCODE_LSHIFT] == 1)    camera_vel.y -= speed;
         camera_pos += camera_vel;
 
+
+        const float move_delay = 0.5f;
+        if(accum > move_delay)
+        {
+            invaders.Move(glm::vec3(0.3f, 0, 0));
+            accum -= move_delay;
+        }
+        else
+        {
+            accum += dt;
+        }
+
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 view = glm::lookAtRH(camera_pos, camera_pos + camera_forward, kWorldUp);
@@ -136,6 +156,11 @@ int main()
         {
             std::cerr << "OpenGL error. Error code: 0x" << std::hex << error_code << std::endl;
         }
+
+        SDL_Delay(1);
+        uint64_t end = SDL_GetPerformanceCounter();
+        dt = static_cast<float>(end - start) / static_cast<float>(SDL_GetPerformanceFrequency());
+        start = end;
     }
 
     SDL_GL_DeleteContext(context);

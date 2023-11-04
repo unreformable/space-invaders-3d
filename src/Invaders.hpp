@@ -12,9 +12,13 @@ class Invaders
 {
 public:
     Invaders();
+
     void Move(const glm::vec3& distance);
     void Render(const Program& program) const;
     // FloatRect GetBoundingRect() const;
+
+    inline uint32_t Rows() const { return m_Rows; }
+    inline uint32_t Cols() const { return m_Cols; }
 
 private:
     Invaders(const Invaders& other);
@@ -24,6 +28,7 @@ private:
 
 private:
     Model m_SmallInvader;
-    glm::ivec2 m_InvaderCount;
+    uint32_t m_Rows;
+    uint32_t m_Cols;
     std::vector<glm::mat4> m_InvaderTransforms;
 };
