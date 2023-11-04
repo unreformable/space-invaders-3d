@@ -8,8 +8,9 @@ set(SRC_FILES
     src/main.cpp
     src/Bitmap3D.cpp
     src/Camera.cpp
+    src/Cannon.cpp
     src/Invaders.cpp
-    src/LaserCannon.cpp
+    src/Laser.cpp
     src/Mesh.cpp
     src/Program.cpp
     src/Utils.cpp

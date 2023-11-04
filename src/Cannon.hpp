@@ -7,10 +7,10 @@
 
 
 
-class LaserCannon
+class Cannon
 {
 public:
-    LaserCannon();
+    Cannon();
 
     void SetPosition(const glm::vec3& position);
     void Move(const glm::vec3& distance);

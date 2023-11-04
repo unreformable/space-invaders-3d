@@ -1,8 +1,9 @@
 #include "Bitmap3D.hpp"
 #include "Camera.hpp"
+#include "Cannon.hpp"
 #include "CoordinateSystem.hpp"
 #include "Invaders.hpp"
-#include "LaserCannon.hpp"
+#include "Laser.hpp"
 #include "Program.hpp"
 #include "Utils.hpp"
 
@@ -69,8 +70,15 @@ int main()
     // GAME OBJECTS
     Invaders invaders;
 
-    LaserCannon cannon;
+    Cannon cannon;
     cannon.SetPosition({0, 0, 50});
+
+    Bitmap3D laser_bitmap;
+    laser_bitmap.Load("../assets/bitmaps/laser");
+    Mesh laser_mesh;
+    laser_mesh.CreateFromBitmap(laser_bitmap);
+    Laser laser;
+    laser.SetMesh(&laser_mesh);
 
     // CAMERA
     const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 300.0f);
@@ -134,6 +142,8 @@ int main()
         glm::mat4 view = camera.View();
         program.SetUniform("uView", view);
         program.Use();
+        laser.Prepare();
+        laser.Render(program);
         invaders.Render(program);
         cannon.Render(program);
 
