@@ -20,12 +20,16 @@ LaserCannon::LaserCannon()
 
 void LaserCannon::SetPosition(const glm::vec3& position)
 {
-    
+    m_Transform[3].x = position.x;
+    m_Transform[3].y = position.y;
+    m_Transform[3].z = position.z;
 }
 
 void LaserCannon::Move(const glm::vec3& distance)
 {
-
+    m_Transform[3].x += distance.x;
+    m_Transform[3].y += distance.y;
+    m_Transform[3].z += distance.z;
 }
 
 void LaserCannon::Render(const Program& program) const

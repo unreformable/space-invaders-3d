@@ -66,17 +66,21 @@ int main()
     Program program;
     program.Load("../assets/shaders/model.vs", "../assets/shaders/model.fs");
 
+    // GAME OBJECTS
+    Invaders invaders;
+    float accum{};
+
+    LaserCannon cannon;
+    cannon.SetPosition({0, 0, 50});
+
     // CAMERA
     const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 300.0f);
     program.SetUniform("uProj", proj);
 
     Camera camera;
 
-    // GAME OBJECTS
-    Invaders invaders;
-    float accum{};
-
-    LaserCannon cannon;
+    // INPUT
+    bool key_states[SDL_NUM_SCANCODES]{};
 
     // MAIN LOOP
     float dt{};
@@ -84,6 +88,7 @@ int main()
     bool running = true;
     while(running == true)
     {
+        // EVENTS HANDLING
         SDL_Event e;
         while(SDL_PollEvent(&e) != 0)
         {
@@ -95,13 +100,24 @@ int main()
             {
                 if(e.key.keysym.sym == SDLK_ESCAPE)
                     running = false;
+                
+                key_states[e.key.keysym.scancode] = 1;
+            }
+            else if(e.type == SDL_KEYUP)
+            {
+                key_states[e.key.keysym.scancode] = 0;
             }
         }
 
-        const float move_delay = 0.5f;
+        // UPDATING
+        if(key_states[SDL_SCANCODE_D]) cannon.Move(22.0f *  kWorldRight * dt);
+        if(key_states[SDL_SCANCODE_A]) cannon.Move(22.0f * -kWorldRight * dt);
+
+        // invaders.Move(dt * glm::vec3(5.0f, 0, 0));
+        const float move_delay = 1.0f;
         if(accum > move_delay)
         {
-            invaders.Move(glm::vec3(0.3f, 0, 0));
+            invaders.Move(glm::vec3(1.5f, 0, 0));
             accum -= move_delay;
         }
         else
@@ -109,10 +125,12 @@ int main()
             accum += dt;
         }
 
+        camera.SetPosition(cannon.Position() + glm::vec3(0, 50, 50));
+        camera.LookAt(cannon.Position() + glm::vec3(0, 0, -30));
+
+        // RENDERING
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        camera.SetPosition(cannon.Position() + glm::vec3(0, 30, 60));
-        camera.LookAt(cannon.Position());
         glm::mat4 view = camera.View();
         program.SetUniform("uView", view);
         program.Use();
@@ -121,12 +139,14 @@ int main()
 
         SDL_GL_SwapWindow(window);
 
+        // OPENGL ERROR DETECTION
         const GLenum error_code = glGetError();
         if(error_code != GL_NONE)
         {
             std::cerr << "OpenGL error. Error code: 0x" << std::hex << error_code << std::endl;
         }
 
+        // DELTA TIME CALCULATION
         SDL_Delay(1);
         uint64_t end = SDL_GetPerformanceCounter();
         dt = static_cast<float>(end - start) / static_cast<float>(SDL_GetPerformanceFrequency());

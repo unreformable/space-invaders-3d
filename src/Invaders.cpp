@@ -23,7 +23,7 @@ Invaders::Invaders()
         const float x = i % m_Cols;
         const float z = i / m_Cols;
 
-        const glm::vec3 offset = 12.0f * glm::vec3(x, 0, -z);
+        const glm::vec3 offset = 13.0f * glm::vec3(x, 0, -z);
 
         glm::mat4 transform = glm::mat4(1.0f);
         transform = glm::translate(transform, offset);
