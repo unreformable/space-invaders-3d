@@ -9,11 +9,11 @@
 
 
 
-class Model
+class Mesh
 {
 public:
-    Model();
-    ~Model();
+    Mesh();
+    ~Mesh();
 
     void CreateFromBitmap(const Bitmap3D& bitmap);
     void Prepare() const;
@@ -22,10 +22,10 @@ public:
     inline uint32_t Frames() const { return m_Frames; }
 
 private:
-    Model(const Model& other);
-    Model& operator=(const Model& other);
-    Model(Model&& other);
-    Model& operator=(Model&& other);
+    Mesh(const Mesh& other);
+    Mesh& operator=(const Mesh& other);
+    Mesh(Mesh&& other);
+    Mesh& operator=(Mesh&& other);
 
 private:
     uint32_t m_Frames;

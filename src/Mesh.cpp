@@ -1,25 +1,25 @@
-#include "Model.hpp"
+#include "Mesh.hpp"
 
 #include "Utils.hpp"
 
 
 
-Model::Model()
+Mesh::Mesh()
 :   m_Frames{},
     m_Vao{},
     m_Vbo{}
 {   
 }
 
-Model::~Model()
+Mesh::~Mesh()
 {
     glDeleteVertexArrays(1, &m_Vao);
     glDeleteBuffers(1, &m_Vbo);
 }
 
-void Model::CreateFromBitmap(const Bitmap3D& bitmap)
+void Mesh::CreateFromBitmap(const Bitmap3D& bitmap)
 {
-    this->~Model();
+    this->~Mesh();
 
     m_VertexCounts.resize(bitmap.Frames());
     m_VertexOffsets.resize(bitmap.Frames());
@@ -53,12 +53,12 @@ void Model::CreateFromBitmap(const Bitmap3D& bitmap)
     m_Vao = vao;
 }
 
-void Model::Prepare() const
+void Mesh::Prepare() const
 {
     glBindVertexArray(m_Vao);
 }
 
-void Model::Render(uint32_t frame) const
+void Mesh::Render(uint32_t frame) const
 {
     glDrawArrays(GL_TRIANGLES, m_VertexOffsets[frame], m_VertexCounts[frame]);
 }

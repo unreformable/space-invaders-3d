@@ -7,15 +7,14 @@
 
 
 Invaders::Invaders()
+:   m_Rows(5),
+    m_Cols(11)
 {
     Bitmap3D bitmap;
     bitmap.Load("../assets/bitmaps/small_invader");
     // Reverse bitmap, so bitmap's y goes with mesh's y
     bitmap.ReverseEachFrame();
     m_SmallInvader.CreateFromBitmap(bitmap);
-
-    m_Rows = 5;
-    m_Cols = 11;
 
     const uint32_t invader_count = m_Rows * m_Cols;
     m_InvaderTransforms.reserve(invader_count);

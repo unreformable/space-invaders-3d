@@ -7,8 +7,10 @@ add_subdirectory(lib)
 set(SRC_FILES
     src/main.cpp
     src/Bitmap3D.cpp
+    src/Camera.cpp
     src/Invaders.cpp
-    src/Model.cpp
+    src/LaserCannon.cpp
+    src/Mesh.cpp
     src/Program.cpp
     src/Utils.cpp
 )

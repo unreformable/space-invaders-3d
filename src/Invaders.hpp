@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Model.hpp"
+#include "Mesh.hpp"
 #include "Program.hpp"
 
 #include "glm/vec2.hpp"
@@ -27,8 +27,8 @@ private:
     Invaders& operator=(Invaders&& other);
 
 private:
-    Model m_SmallInvader;
+    std::vector<glm::mat4> m_InvaderTransforms;
     uint32_t m_Rows;
     uint32_t m_Cols;
-    std::vector<glm::mat4> m_InvaderTransforms;
+    Mesh m_SmallInvader;
 };

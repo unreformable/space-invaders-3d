@@ -1,12 +1,12 @@
 #include "Bitmap3D.hpp"
+#include "Camera.hpp"
 #include "CoordinateSystem.hpp"
 #include "Invaders.hpp"
-#include "Model.hpp"
+#include "LaserCannon.hpp"
 #include "Program.hpp"
 #include "Utils.hpp"
 
 #include "glad/glad.h"
-#include "glm/gtc/type_ptr.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/mat4x4.hpp"
@@ -20,8 +20,8 @@
 int main()
 {
     // SETUP
-    const int window_w = 600;
-    const int window_h = 800;
+    const int window_w = 1280;
+    const int window_h = 720;
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -67,17 +67,16 @@ int main()
     program.Load("../assets/shaders/model.vs", "../assets/shaders/model.fs");
 
     // CAMERA
-    const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 200.0f);
+    const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 300.0f);
     program.SetUniform("uProj", proj);
 
-    bool key_states[SDL_NUM_SCANCODES]{};
-    glm::vec3 camera_pos = glm::vec3(5, 15, 30);
-    float camera_pitch = 0;
-    float camera_yaw = 0;
+    Camera camera;
 
     // GAME OBJECTS
     Invaders invaders;
     float accum{};
+
+    LaserCannon cannon;
 
     // MAIN LOOP
     float dt{};
@@ -94,41 +93,10 @@ int main()
             }
             if(e.type == SDL_KEYDOWN)
             {
-                key_states[e.key.keysym.scancode] = 1;
-
                 if(e.key.keysym.sym == SDLK_ESCAPE)
                     running = false;
             }
-            if(e.type == SDL_KEYUP)
-            {
-                key_states[e.key.keysym.scancode] = 0;
-            }
-            if(e.type == SDL_MOUSEMOTION)
-            {
-                camera_pitch -= e.motion.yrel * 0.004f;
-                camera_yaw -= e.motion.xrel * 0.004f;
-
-                camera_pitch = glm::clamp(camera_pitch, glm::radians(-89.0f), glm::radians(89.0f));
-            }
         }
-
-        const glm::vec3 camera_forward = glm::vec3(
-            -glm::sin(camera_yaw),
-             glm::sin(camera_pitch) * glm::cos(camera_yaw),
-            -glm::cos(camera_pitch) * glm::cos(camera_yaw)
-        );
-        const glm::vec3 camera_right = glm::normalize(glm::cross(camera_forward, kWorldUp));
-
-        const float speed = 0.1f;
-        glm::vec3 camera_vel{};
-        if(key_states[SDL_SCANCODE_W] == 1)         camera_vel += speed * camera_forward;
-        if(key_states[SDL_SCANCODE_S] == 1)         camera_vel -= speed * camera_forward;
-        if(key_states[SDL_SCANCODE_D] == 1)         camera_vel += speed * camera_right;
-        if(key_states[SDL_SCANCODE_A] == 1)         camera_vel -= speed * camera_right;
-        if(key_states[SDL_SCANCODE_SPACE] == 1)     camera_vel.y += speed;
-        if(key_states[SDL_SCANCODE_LSHIFT] == 1)    camera_vel.y -= speed;
-        camera_pos += camera_vel;
-
 
         const float move_delay = 0.5f;
         if(accum > move_delay)
@@ -141,13 +109,15 @@ int main()
             accum += dt;
         }
 
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 view = glm::lookAtRH(camera_pos, camera_pos + camera_forward, kWorldUp);
+        camera.SetPosition(cannon.Position() + glm::vec3(0, 30, 60));
+        camera.LookAt(cannon.Position());
+        glm::mat4 view = camera.View();
         program.SetUniform("uView", view);
         program.Use();
         invaders.Render(program);
+        cannon.Render(program);
 
         SDL_GL_SwapWindow(window);
 
