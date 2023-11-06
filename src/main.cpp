@@ -2,6 +2,7 @@
 #include "Camera.hpp"
 #include "Cannon.hpp"
 #include "CoordinateSystem.hpp"
+#include "Keyboard.hpp"
 #include "Invaders.hpp"
 #include "Laser.hpp"
 #include "Program.hpp"
@@ -90,9 +91,6 @@ int main()
 
     Camera camera;
 
-    // INPUT
-    bool key_states[SDL_NUM_SCANCODES]{};
-
     // MAIN LOOP
     float dt{};
     uint64_t start = SDL_GetPerformanceCounter();
@@ -103,27 +101,26 @@ int main()
         SDL_Event e;
         while(SDL_PollEvent(&e) != 0)
         {
+            Keyboard::Update(e.key);
+
             if(e.type == SDL_QUIT)
             {
                 running = false;
             }
-            if(e.type == SDL_KEYDOWN)
-            {
-                if(e.key.keysym.sym == SDLK_ESCAPE)
-                    running = false;
-
-                key_states[e.key.keysym.scancode] = 1;
-            }
-            else if(e.type == SDL_KEYUP)
-            {
-                key_states[e.key.keysym.scancode] = 0;
-            }
+            if(Keyboard::IsKeyPressed(SDL_SCANCODE_ESCAPE))
+                running = false;
         }
 
         // UPDATING
-        if(key_states[SDL_SCANCODE_D]) cannon.Move(22.0f *  kWorldRight * dt);
-        if(key_states[SDL_SCANCODE_A]) cannon.Move(22.0f * -kWorldRight * dt);
-        if(key_states[SDL_SCANCODE_W])
+        if(Keyboard::IsKeyPressed(SDL_SCANCODE_D))
+        {
+            cannon.Move(22.0f *  kWorldRight * dt);
+        }
+        if(Keyboard::IsKeyPressed(SDL_SCANCODE_A))
+        {
+            cannon.Move(22.0f * -kWorldRight * dt);
+        }
+        if(Keyboard::IsKeyPressed(SDL_SCANCODE_W))
         {
             if(current_shoot_delay <= 0.0f)
             {

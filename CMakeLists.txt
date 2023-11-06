@@ -10,6 +10,7 @@ set(SRC_FILES
     src/Camera.cpp
     src/Cannon.cpp
     src/Invaders.cpp
+    src/Keyboard.cpp
     src/Laser.cpp
     src/Mesh.cpp
     src/Program.cpp
