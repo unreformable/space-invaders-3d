@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "atomic": "cpp",
+        "*.tcc": "cpp",
+        "chrono": "cpp",
+        "cstdint": "cpp",
+        "random": "cpp",
+        "stop_token": "cpp"
+    }
+}

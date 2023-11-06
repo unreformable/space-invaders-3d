@@ -31,7 +31,7 @@ namespace Utils
 
         const glm::vec3 to_center_adjust = glm::vec3(
             -static_cast<float>(bitmap.Width()) / 2.0f,
-             0.0f,
+            -0.5f,
              static_cast<float>(bitmap.Height()) / 2.0f
         );
 
@@ -120,5 +120,23 @@ namespace Utils
             vertices[vertex_count + 5] = Vertex{ right_bottom_front + offset, glm::vec3(0, -1, 0) };
             vertex_count += 6;
         }
+    }
+
+    Box BoundingBoxFromBitmap(const Bitmap3D& bitmap)
+    {
+        Box box;
+
+        box.SetMin({
+            -static_cast<float>(bitmap.Width()) / 2.0f,
+            -0.5f,
+            static_cast<float>(bitmap.Height()) / 2.0f
+        });
+        box.SetMax({
+            static_cast<float>(bitmap.Width()) / 2.0f,
+            0.5f,
+            -static_cast<float>(bitmap.Height()) / 2.0f
+        });
+
+        return std::move(box);
     }
 }

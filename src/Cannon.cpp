@@ -16,13 +16,6 @@ Cannon::Cannon()
     m_Mesh.CreateFromBitmap(bitmap);
 }
 
-void Cannon::SetPosition(const glm::vec3& position)
-{
-    m_Transform[3].x = position.x;
-    m_Transform[3].y = position.y;
-    m_Transform[3].z = position.z;
-}
-
 void Cannon::Move(const glm::vec3& distance)
 {
     m_Transform[3].x += distance.x;
@@ -35,4 +28,11 @@ void Cannon::Render(const Program& program) const
     program.SetUniform("uWorld", m_Transform);
     m_Mesh.Prepare();
     m_Mesh.Render(0);
+}
+
+void Cannon::SetPosition(const glm::vec3& position)
+{
+    m_Transform[3].x = position.x;
+    m_Transform[3].y = position.y;
+    m_Transform[3].z = position.z;
 }

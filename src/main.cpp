@@ -77,8 +77,12 @@ int main()
     laser_bitmap.Load("../assets/bitmaps/laser");
     Mesh laser_mesh;
     laser_mesh.CreateFromBitmap(laser_bitmap);
-    Laser laser;
-    laser.SetMesh(&laser_mesh);
+    Laser laser_prefab;
+    laser_prefab.SetMesh(&laser_mesh);
+    
+    std::vector<Laser> lasers;
+    float current_shoot_delay = 0.0f;
+    const float shoot_delay = 1.0f;
 
     // CAMERA
     const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 300.0f);
@@ -107,7 +111,7 @@ int main()
             {
                 if(e.key.keysym.sym == SDLK_ESCAPE)
                     running = false;
-                
+
                 key_states[e.key.keysym.scancode] = 1;
             }
             else if(e.type == SDL_KEYUP)
@@ -119,6 +123,16 @@ int main()
         // UPDATING
         if(key_states[SDL_SCANCODE_D]) cannon.Move(22.0f *  kWorldRight * dt);
         if(key_states[SDL_SCANCODE_A]) cannon.Move(22.0f * -kWorldRight * dt);
+        if(key_states[SDL_SCANCODE_W])
+        {
+            if(current_shoot_delay <= 0.0f)
+            {
+                laser_prefab.SetPosition(cannon.Position());
+                lasers.push_back(laser_prefab);
+                
+                current_shoot_delay = shoot_delay;
+            }
+        }
 
         // invaders.Move(dt * glm::vec3(5.0f, 0, 0));
         static float accum{};
@@ -133,6 +147,10 @@ int main()
             accum += dt;
         }
 
+        current_shoot_delay -= dt;
+        for(Laser& laser : lasers)
+            laser.Move(dt * glm::vec3(0, 0, -25.0f));
+
         camera.SetPosition(cannon.Position() + glm::vec3(0, 35, 38));
         camera.LookAt(cannon.Position() + glm::vec3(0, 0, -35));
 
@@ -142,8 +160,9 @@ int main()
         glm::mat4 view = camera.View();
         program.SetUniform("uView", view);
         program.Use();
-        laser.Prepare();
-        laser.Render(program);
+        laser_prefab.Prepare();
+        for(const Laser& laser : lasers)
+            laser.Render(program);
         invaders.Render(program);
         cannon.Render(program);
 

@@ -18,6 +18,11 @@ set(SRC_FILES
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    src/
+)
+
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
     glad

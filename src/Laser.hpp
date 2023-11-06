@@ -13,9 +13,10 @@ public:
     Laser();
 
     void Move(const glm::vec3& distance);
-    void Prepare();
-    void Render(const Program& program);
+    void Prepare() const;
+    void Render(const Program& program) const;
 
+    void SetPosition(const glm::vec3& position);
     inline void SetMesh(const Mesh* mesh) { m_Mesh = mesh; }
 
 private:
