@@ -15,7 +15,8 @@ public:
 
     void Update(float dt);
     void Render(const Program& program) const;
-    // FloatRect GetBoundingRect() const;
+    
+    // inline const Box& BoundingBox() const { return m_BoundingBox; }
 
     inline uint32_t Rows() const { return m_Rows; }
     inline uint32_t Cols() const { return m_Cols; }
@@ -30,6 +31,7 @@ private:
     std::vector<glm::mat4> m_InvaderTransforms;
     const uint32_t m_Rows;
     const uint32_t m_Cols;
+
     Mesh m_SmallInvader;
 
     const float m_MoveDelay;

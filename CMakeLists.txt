@@ -12,7 +12,7 @@ set(SRC_FILES
     src/Engine.cpp
     src/Input.cpp
     src/Invaders.cpp
-    src/Laser.cpp
+    src/Lasers.cpp
     src/Mesh.cpp
     src/Program.cpp
     src/Utils.cpp

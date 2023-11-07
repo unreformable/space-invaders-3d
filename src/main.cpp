@@ -5,7 +5,7 @@
 #include "Engine.hpp"
 #include "Input.hpp"
 #include "Invaders.hpp"
-#include "Laser.hpp"
+#include "Lasers.hpp"
 #include "Program.hpp"
 #include "Utils.hpp"
 
@@ -35,10 +35,12 @@ int main()
     laser_bitmap.Load("../assets/bitmaps/laser");
     Mesh laser_mesh;
     laser_mesh.CreateFromBitmap(laser_bitmap);
-    Laser laser_prefab;
-    laser_prefab.SetMesh(&laser_mesh);
     
-    std::vector<Laser> lasers;
+    Lasers lasers;
+    Box limit;
+    limit.SetMin(cannon.Position() + glm::vec3(-100, -100, -110));
+    limit.SetMax(cannon.Position() + glm::vec3(100, 100, 100));
+    lasers.SetLimit(limit);
     float current_shoot_delay = 0.0f;
     const float shoot_delay = 1.0f;
 
@@ -65,13 +67,15 @@ int main()
 
         // UPDATING
         const float dt = Engine::DeltaTime();
+
         cannon.Update(dt);
         if(Input::IsKeyPressed(SDL_SCANCODE_W))
         {
             if(current_shoot_delay <= 0.0f)
             {
-                laser_prefab.SetPosition(cannon.Position());
-                lasers.push_back(laser_prefab);
+                glm::mat4 transform(1.0f);
+                transform = glm::translate(transform, cannon.Position());
+                lasers.Create(transform, glm::vec3(0, 0, -25.0f), &laser_mesh);
                 
                 current_shoot_delay = shoot_delay;
             }
@@ -80,8 +84,7 @@ int main()
         invaders.Update(dt);
 
         current_shoot_delay -= dt;
-        for(Laser& laser : lasers)
-            laser.Move(dt * glm::vec3(0, 0, -25.0f));
+        lasers.Update(dt);
 
         camera.SetPosition(cannon.Position() + glm::vec3(0, 35, 38));
         camera.LookAt(cannon.Position() + glm::vec3(0, 0, -35));
@@ -92,9 +95,7 @@ int main()
             glm::mat4 view = camera.View();
             program.SetUniform("uView", view);
             program.Use();
-            laser_prefab.Prepare();
-            for(const Laser& laser : lasers)
-                laser.Render(program);
+            lasers.Render(program);
             invaders.Render(program);
             cannon.Render(program);
         }
