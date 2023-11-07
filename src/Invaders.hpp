@@ -13,7 +13,7 @@ class Invaders
 public:
     Invaders();
 
-    void Move(const glm::vec3& distance);
+    void Update(float dt);
     void Render(const Program& program) const;
     // FloatRect GetBoundingRect() const;
 
@@ -28,7 +28,10 @@ private:
 
 private:
     std::vector<glm::mat4> m_InvaderTransforms;
-    uint32_t m_Rows;
-    uint32_t m_Cols;
+    const uint32_t m_Rows;
+    const uint32_t m_Cols;
     Mesh m_SmallInvader;
+
+    const float m_MoveDelay;
+    float m_CurrentMoveDelay;
 };

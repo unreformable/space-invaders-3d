@@ -2,6 +2,7 @@
 
 #include "SDL2/SDL.h"
 
+#include <functional>
 #include <string>
 
 
@@ -13,20 +14,24 @@ struct EngineProps
     std::string m_WindowTitle;
 };
 
-// Please, do not create two objects of this class (this note > singleton)
 class Engine
 {
 public:
-    Engine(const EngineProps& props);
-    ~Engine();
+    using EventCallback = std::function<void(const SDL_Event&)>;
 
-    void LoopBegin();
-    void LoopEnd();
+public:
+    static void Initalize(const EngineProps& props);
+    static void Terminate();
 
-    void RenderBegin();
-    void RenderEnd();
+    static void LoopBegin();
+    static void LoopEnd();
 
-    inline float DeltaTime() const { return m_DeltaTime; }
+    static void RenderBegin();
+    static void RenderEnd();
+
+    static inline void SetEventCallback(EventCallback callback) { m_EventCallback = callback; }
+
+    static inline float DeltaTime() { return m_DeltaTime; }
 
 private:
     Engine(const Engine& other);
@@ -35,9 +40,11 @@ private:
     Engine& operator=(Engine&& other);
 
 private:
-    SDL_Window* m_Window;
-    SDL_GLContext m_Context;
+    static SDL_Window* m_Window;
+    static SDL_GLContext m_Context;
 
-    float m_DeltaTime;
-    uint64_t m_LoopStartMs;
+    static float m_DeltaTime;
+    static uint64_t m_LoopStartMs;
+
+    static EventCallback m_EventCallback;
 };

@@ -9,14 +9,7 @@
 #include "Program.hpp"
 #include "Utils.hpp"
 
-#include "glad/glad.h"
 #include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_transform.hpp"
-#include "glm/mat4x4.hpp"
-#include "SDL2/SDL.h"
-
-#include <cassert>
-#include <iostream>
 
 
 
@@ -27,7 +20,7 @@ int main()
     props.m_WindowHeight = 720;
     props.m_WindowTitle = "Space Invaders 3D";
 
-    Engine engine(props);
+    Engine::Initalize(props);
 
     Program program;
     program.Load("../assets/shaders/model.vs", "../assets/shaders/model.fs");
@@ -55,40 +48,25 @@ int main()
 
     Camera camera;
 
-    // INPUT
-    Input input;
+    // MAIN LOOP DATA
+    bool running = true;
+    Engine::SetEventCallback([&](const SDL_Event& e)
+    {
+        if(e.type == SDL_QUIT)
+            running = false;
+        if(Input::IsKeyPressed(SDL_SCANCODE_ESCAPE))
+            running = false;
+    });
 
     // MAIN LOOP
-    bool running = true;
     while(running == true)
     {
-        engine.LoopBegin();
-
-        // EVENTS HANDLING
-        SDL_Event e;
-        while(SDL_PollEvent(&e) != 0)
-        {
-            input.Update(e);
-
-            if(e.type == SDL_QUIT)
-            {
-                running = false;
-            }
-            if(input.IsKeyPressed(SDL_SCANCODE_ESCAPE))
-                running = false;
-        }
+        Engine::LoopBegin();
 
         // UPDATING
-        const float dt = engine.DeltaTime();
-        if(input.IsKeyPressed(SDL_SCANCODE_D))
-        {
-            cannon.Move(22.0f *  kWorldRight * dt);
-        }
-        if(input.IsKeyPressed(SDL_SCANCODE_A))
-        {
-            cannon.Move(22.0f * -kWorldRight * dt);
-        }
-        if(input.IsKeyPressed(SDL_SCANCODE_W))
+        const float dt = Engine::DeltaTime();
+        cannon.Update(dt);
+        if(Input::IsKeyPressed(SDL_SCANCODE_W))
         {
             if(current_shoot_delay <= 0.0f)
             {
@@ -99,18 +77,7 @@ int main()
             }
         }
 
-        // invaders.Move(dt * glm::vec3(5.0f, 0, 0));
-        static float accum{};
-        const float move_delay = 1.0f;
-        if(accum > move_delay)
-        {
-            invaders.Move(glm::vec3(1.5f, 0, 0));
-            accum -= move_delay;
-        }
-        else
-        {
-            accum += dt;
-        }
+        invaders.Update(dt);
 
         current_shoot_delay -= dt;
         for(Laser& laser : lasers)
@@ -120,7 +87,7 @@ int main()
         camera.LookAt(cannon.Position() + glm::vec3(0, 0, -35));
 
         // RENDERING
-        engine.RenderBegin();
+        Engine::RenderBegin();
         {
             glm::mat4 view = camera.View();
             program.SetUniform("uView", view);
@@ -131,10 +98,12 @@ int main()
             invaders.Render(program);
             cannon.Render(program);
         }
-        engine.RenderEnd();
+        Engine::RenderEnd();
 
-        engine.LoopEnd();
+        Engine::LoopEnd();
     }
+
+    Engine::Terminate();
     
     return 0;
 }

@@ -8,7 +8,9 @@
 
 Invaders::Invaders()
 :   m_Rows(5),
-    m_Cols(11)
+    m_Cols(11),
+    m_MoveDelay(1.0f),
+    m_CurrentMoveDelay(m_MoveDelay)
 {
     Bitmap3D bitmap;
     bitmap.Load("../assets/bitmaps/small_invader");
@@ -31,7 +33,7 @@ Invaders::Invaders()
     }
 }
 
-void Invaders::Move(const glm::vec3& distance)
+void Invaders::Update(float dt)
 {
     // const uint32_t first = row * m_Cols;
     // const uint32_t last = (row + 1) * m_Cols;
@@ -42,10 +44,21 @@ void Invaders::Move(const glm::vec3& distance)
     //     transform = glm::translate(transform, distance);
     // }
 
-    for(glm::mat4& transform : m_InvaderTransforms)
+    if(m_CurrentMoveDelay > m_MoveDelay)
     {
-        transform = glm::translate(transform, distance);
+        for(glm::mat4& transform : m_InvaderTransforms)
+        {
+            transform = glm::translate(transform, glm::vec3(1.5f, 0, 0));
+        }
+
+        m_CurrentMoveDelay -= m_MoveDelay;
     }
+    else
+    {
+        m_CurrentMoveDelay += dt;
+    }
+
+    
 }
 
 void Invaders::Render(const Program& program) const

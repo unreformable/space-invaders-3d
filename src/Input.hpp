@@ -7,10 +7,16 @@
 class Input
 {
 public:
-    void Update(const SDL_Event& event);
+    static void Update(const SDL_Event& event);
 
-    inline bool IsKeyPressed(SDL_Scancode key) const { return m_KeyStates[key] == 1; }
+    static inline bool IsKeyPressed(SDL_Scancode key) { return m_KeyStates[key] == 1; }
 
 private:
-    int m_KeyStates[SDL_NUM_SCANCODES]{};
+    Input(const Input& other);
+    Input& operator=(const Input& other);
+    Input(Input&& other);
+    Input& operator=(Input&& other);
+
+private:
+    static int m_KeyStates[SDL_NUM_SCANCODES];
 };

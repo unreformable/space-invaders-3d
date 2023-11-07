@@ -2,6 +2,8 @@
 
 
 
+int Input::m_KeyStates[SDL_NUM_SCANCODES]{};
+
 void Input::Update(const SDL_Event& event)
 {
     if(event.type == SDL_KEYDOWN)

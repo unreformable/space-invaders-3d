@@ -1,5 +1,7 @@
 #include "Engine.hpp"
 
+#include "Input.hpp"
+
 #include "glad/glad.h"
 
 #include <cassert>
@@ -7,7 +9,15 @@
 
 
 
-Engine::Engine(const EngineProps& props)
+SDL_Window* Engine::m_Window;
+SDL_GLContext Engine::m_Context;
+
+float Engine::m_DeltaTime;
+uint64_t Engine::m_LoopStartMs;
+
+Engine::EventCallback Engine::m_EventCallback;
+
+void Engine::Initalize(const EngineProps& props)
 {
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -58,7 +68,7 @@ Engine::Engine(const EngineProps& props)
     m_LoopStartMs = SDL_GetPerformanceCounter();
 }
 
-Engine::~Engine()
+void Engine::Terminate()
 {
     SDL_GL_DeleteContext(m_Context);
     SDL_DestroyWindow(m_Window);
@@ -67,6 +77,13 @@ Engine::~Engine()
 
 void Engine::LoopBegin()
 {
+    SDL_Event e;
+    while(SDL_PollEvent(&e) != 0)
+    {
+        Input::Update(e);
+
+        m_EventCallback(e);
+    }
 }
 
 void Engine::LoopEnd()
