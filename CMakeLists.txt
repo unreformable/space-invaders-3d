@@ -9,8 +9,9 @@ set(SRC_FILES
     src/Bitmap3D.cpp
     src/Camera.cpp
     src/Cannon.cpp
+    src/Engine.cpp
+    src/Input.cpp
     src/Invaders.cpp
-    src/Keyboard.cpp
     src/Laser.cpp
     src/Mesh.cpp
     src/Program.cpp

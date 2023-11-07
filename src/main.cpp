@@ -2,7 +2,8 @@
 #include "Camera.hpp"
 #include "Cannon.hpp"
 #include "CoordinateSystem.hpp"
-#include "Keyboard.hpp"
+#include "Engine.hpp"
+#include "Input.hpp"
 #include "Invaders.hpp"
 #include "Laser.hpp"
 #include "Program.hpp"
@@ -21,49 +22,12 @@
 
 int main()
 {
-    // SETUP
-    const int window_w = 1280;
-    const int window_h = 720;
+    EngineProps props;
+    props.m_WindowWidth = 1280;
+    props.m_WindowHeight = 720;
+    props.m_WindowTitle = "Space Invaders 3D";
 
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cerr << "Could not initalize SDL2" << std::endl;
-        return 1;
-    }
-    SDL_GL_LoadLibrary(NULL);
-
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
-    SDL_Window* window = SDL_CreateWindow("Space Invaders 3D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_w, window_h, SDL_WINDOW_OPENGL);
-    assert(window != NULL);
-
-    SDL_GLContext context = SDL_GL_CreateContext(window);
-    assert(context != NULL);
-
-    gladLoadGLLoader(SDL_GL_GetProcAddress);
-    
-    // V-sync on
-    SDL_GL_SetSwapInterval(1);
-
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glViewport(0, 0, window_w, window_h);
+    Engine engine(props);
 
     Program program;
     program.Load("../assets/shaders/model.vs", "../assets/shaders/model.fs");
@@ -86,41 +50,45 @@ int main()
     const float shoot_delay = 1.0f;
 
     // CAMERA
-    const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(window_w)/window_h, 0.1f, 300.0f);
+    const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(props.m_WindowWidth)/props.m_WindowHeight, 0.1f, 300.0f);
     program.SetUniform("uProj", proj);
 
     Camera camera;
 
+    // INPUT
+    Input input;
+
     // MAIN LOOP
-    float dt{};
-    uint64_t start = SDL_GetPerformanceCounter();
     bool running = true;
     while(running == true)
     {
+        engine.LoopBegin();
+
         // EVENTS HANDLING
         SDL_Event e;
         while(SDL_PollEvent(&e) != 0)
         {
-            Keyboard::Update(e.key);
+            input.Update(e);
 
             if(e.type == SDL_QUIT)
             {
                 running = false;
             }
-            if(Keyboard::IsKeyPressed(SDL_SCANCODE_ESCAPE))
+            if(input.IsKeyPressed(SDL_SCANCODE_ESCAPE))
                 running = false;
         }
 
         // UPDATING
-        if(Keyboard::IsKeyPressed(SDL_SCANCODE_D))
+        const float dt = engine.DeltaTime();
+        if(input.IsKeyPressed(SDL_SCANCODE_D))
         {
             cannon.Move(22.0f *  kWorldRight * dt);
         }
-        if(Keyboard::IsKeyPressed(SDL_SCANCODE_A))
+        if(input.IsKeyPressed(SDL_SCANCODE_A))
         {
             cannon.Move(22.0f * -kWorldRight * dt);
         }
-        if(Keyboard::IsKeyPressed(SDL_SCANCODE_W))
+        if(input.IsKeyPressed(SDL_SCANCODE_W))
         {
             if(current_shoot_delay <= 0.0f)
             {
@@ -152,36 +120,21 @@ int main()
         camera.LookAt(cannon.Position() + glm::vec3(0, 0, -35));
 
         // RENDERING
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glm::mat4 view = camera.View();
-        program.SetUniform("uView", view);
-        program.Use();
-        laser_prefab.Prepare();
-        for(const Laser& laser : lasers)
-            laser.Render(program);
-        invaders.Render(program);
-        cannon.Render(program);
-
-        SDL_GL_SwapWindow(window);
-
-        // OPENGL ERROR DETECTION
-        const GLenum error_code = glGetError();
-        if(error_code != GL_NONE)
+        engine.RenderBegin();
         {
-            std::cerr << "OpenGL error. Error code: 0x" << std::hex << error_code << std::endl;
+            glm::mat4 view = camera.View();
+            program.SetUniform("uView", view);
+            program.Use();
+            laser_prefab.Prepare();
+            for(const Laser& laser : lasers)
+                laser.Render(program);
+            invaders.Render(program);
+            cannon.Render(program);
         }
+        engine.RenderEnd();
 
-        // DELTA TIME CALCULATION
-        SDL_Delay(1);
-        uint64_t end = SDL_GetPerformanceCounter();
-        dt = static_cast<float>(end - start) / static_cast<float>(SDL_GetPerformanceFrequency());
-        start = end;
+        engine.LoopEnd();
     }
-
-    SDL_GL_DeleteContext(context);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
     
     return 0;
 }
