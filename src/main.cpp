@@ -28,21 +28,15 @@ int main()
     // GAME OBJECTS
     Invaders invaders;
 
-    Cannon cannon;
-    cannon.SetPosition({0, 0, 50});
-
-    Bitmap3D laser_bitmap;
-    laser_bitmap.Load("../assets/bitmaps/laser");
-    Mesh laser_mesh;
-    laser_mesh.CreateFromBitmap(laser_bitmap);
-    
     Lasers lasers;
+
+    Cannon cannon(lasers);
+    cannon.SetPosition({0, 0, 50});
+    
     Box limit;
     limit.SetMin(cannon.Position() + glm::vec3(-100, -100, -110));
     limit.SetMax(cannon.Position() + glm::vec3(100, 100, 100));
     lasers.SetLimit(limit);
-    float current_shoot_delay = 0.0f;
-    const float shoot_delay = 1.0f;
 
     // CAMERA
     const glm::mat4 proj = glm::perspectiveRH(glm::radians(45.0f), static_cast<float>(props.m_WindowWidth)/props.m_WindowHeight, 0.1f, 300.0f);
@@ -69,21 +63,7 @@ int main()
         const float dt = Engine::DeltaTime();
 
         cannon.Update(dt);
-        if(Input::IsKeyPressed(SDL_SCANCODE_W))
-        {
-            if(current_shoot_delay <= 0.0f)
-            {
-                glm::mat4 transform(1.0f);
-                transform = glm::translate(transform, cannon.Position());
-                lasers.Create(transform, glm::vec3(0, 0, -25.0f), &laser_mesh);
-                
-                current_shoot_delay = shoot_delay;
-            }
-        }
-
         invaders.Update(dt);
-
-        current_shoot_delay -= dt;
         lasers.Update(dt);
 
         camera.SetPosition(cannon.Position() + glm::vec3(0, 35, 38));

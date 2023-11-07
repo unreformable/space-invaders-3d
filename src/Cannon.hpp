@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lasers.hpp"
 #include "Mesh.hpp"
 #include "Program.hpp"
 
@@ -10,7 +11,7 @@
 class Cannon
 {
 public:
-    Cannon();
+    Cannon(Lasers& lasers);
 
     void Update(float dt);
     void Render(const Program& program) const;
@@ -24,4 +25,9 @@ private:
 private:
     glm::mat4 m_Transform;
     Mesh m_Mesh;
+
+    float m_CurrentShootDelay = 0.0f;
+    const float m_ShootDelay = 1.0f;
+    Mesh m_Laser;
+    Lasers& m_Lasers;
 };
