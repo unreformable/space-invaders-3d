@@ -1,0 +1,17 @@
+project(space-invaders-3d)
+
+set(SRC_FILES
+    src/Game.cpp
+)
+
+add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    src/
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+    engine
+)
