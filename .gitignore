@@ -1,2 +1,4 @@
 build/
-ideas/
+
+test/
+test.sh

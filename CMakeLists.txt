@@ -1,34 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
 
-project(space-invaders-3d)
-
-add_subdirectory(lib)
-
-set(SRC_FILES
-    src/main.cpp
-    src/Bitmap3D.cpp
-    src/Camera.cpp
-    src/Cannon.cpp
-    src/Engine.cpp
-    src/Input.cpp
-    src/Invaders.cpp
-    src/Lasers.cpp
-    src/Mesh.cpp
-    src/Program.cpp
-    src/Utils.cpp
-)
-
-add_executable(${PROJECT_NAME} ${SRC_FILES})
-
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-    src/
-)
-
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-    glad
-    glm
-    SDL2-static
-    SDL2main
-)
+add_subdirectory(engine)
+add_subdirectory(release)
+add_subdirectory(test)

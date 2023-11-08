@@ -7,4 +7,5 @@ fi
 cd build/
 cmake ..
 make
+cd release/
 ./space-invaders-3d
