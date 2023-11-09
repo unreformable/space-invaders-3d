@@ -18,7 +18,7 @@ public:
     void Run();
 
     RenderSystem* GetRenderSystem() { return &m_RenderSystem; }
-    Input* GetInput() { return &m_Input; }
+    const Input* GetInput() { return &m_Input; }
 
 private:
     void InitalizeRenderSystem();

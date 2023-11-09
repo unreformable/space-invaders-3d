@@ -51,10 +51,10 @@ void Game::InitalizeRenderSystem()
     cannon_bitmap.CreateFromFile("../../assets/bitmaps/cannon");
     cannon_bitmap.ReverseEachFrame();
     
-    Mesh* cannon_mesh = GetRenderSystem()->CreateMesh("cannon");
+    Mesh* cannon_mesh = m_RenderSystem.CreateMesh("cannon");
     cannon_mesh->CreateFromBitmap(cannon_bitmap);
 
-    m_Program = GetRenderSystem()->CreateProgram("mesh");
+    m_Program = m_RenderSystem.CreateProgram("mesh");
     m_Program->CreateFromFiles("../../assets/shaders/mesh.vs", "../../assets/shaders/mesh.fs");
 }
 

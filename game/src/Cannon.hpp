@@ -14,6 +14,7 @@ public:
     virtual void Render() const;
 
 private:
+    glm::vec3 m_Position;
     Mesh* m_Mesh;
     Program* m_Program;
 };
