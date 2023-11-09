@@ -21,7 +21,6 @@ public:
     void Render(uint32_t frame) const;
 
     inline uint32_t Frames() const { return m_Frames; }
-    inline const Box& BoundingBox() const { return m_BoundingBox; }
 
 private:
     Mesh(const Mesh& other);
@@ -35,6 +34,4 @@ private:
     uint32_t m_Frames;
     std::vector<uint32_t> m_VertexCounts;
     std::vector<uint32_t> m_VertexOffsets;
-
-    Box m_BoundingBox;
 };

@@ -18,7 +18,7 @@ Program::~Program()
     glDeleteProgram(m_Handle);
 }
 
-void Program::Load(const char* vs_file_path, const char* fs_file_path)
+void Program::CreateFromFiles(const char* vs_file_path, const char* fs_file_path)
 {
     this->~Program();
 

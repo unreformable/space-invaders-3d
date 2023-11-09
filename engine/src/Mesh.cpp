@@ -7,8 +7,7 @@
 Mesh::Mesh()
 :   m_Frames{},
     m_Vao{},
-    m_Vbo{},
-    m_BoundingBox{}
+    m_Vbo{}
 {
 }
 
@@ -52,8 +51,6 @@ void Mesh::CreateFromBitmap(const Bitmap3D& bitmap)
     glVertexArrayAttribBinding(vao, 1, 0);
     glEnableVertexArrayAttrib(vao, 1);
     m_Vao = vao;
-
-    Utils::BoundingBoxFromBitmap(bitmap, m_BoundingBox);
 }
 
 void Mesh::Prepare() const

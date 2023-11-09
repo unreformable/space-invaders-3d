@@ -22,7 +22,7 @@ Bitmap3D::~Bitmap3D()
         free(m_Data);
 }
 
-void Bitmap3D::Load(const char* file_path)
+void Bitmap3D::CreateFromFile(const char* file_path)
 {
     this->~Bitmap3D();
 

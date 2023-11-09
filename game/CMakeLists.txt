@@ -1,6 +1,8 @@
 project(space-invaders-3d)
 
 set(SRC_FILES
+    src/Actor.cpp
+    src/Cannon.cpp
     src/Game.cpp
 )
 

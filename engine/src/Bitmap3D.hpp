@@ -11,7 +11,7 @@ public:
     Bitmap3D();
     ~Bitmap3D();
 
-    void Load(const char* file_path);
+    void CreateFromFile(const char* file_path);
     void ReverseEachFrame();
     
     inline uint32_t Frames() const { return m_Frames; }

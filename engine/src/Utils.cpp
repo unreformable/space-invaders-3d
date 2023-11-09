@@ -24,6 +24,7 @@ namespace Utils
         file.close();
     }
 
+    // Do not touch!
     void VerticesFromBitmapFrame(const Bitmap3D& bitmap, uint32_t frame, uint32_t& vertex_count, Vertex* vertices)
     {
         const uint32_t pixel_count = bitmap.Width() * bitmap.Height();

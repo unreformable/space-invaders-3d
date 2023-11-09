@@ -1,7 +1,12 @@
 add_subdirectory(lib)
 
 set(SRC_FILES
+    src/Bitmap3D.cpp
     src/Graphics.cpp
+    src/Input.cpp
+    src/Mesh.cpp
+    src/Program.cpp
+    src/Utils.cpp
 )
 
 add_library(engine STATIC ${SRC_FILES})
