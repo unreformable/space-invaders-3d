@@ -7,10 +7,10 @@
 
 
 
-class Cannon: public Actor
+class Laser: public Actor
 {
 public:
-    Cannon(Game& game);
+    Laser(Game& game);
 
     virtual void Update(float dt);
     virtual void Render() const;

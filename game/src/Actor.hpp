@@ -16,6 +16,7 @@ public:
 
     virtual void Update(float dt) {}
     virtual void Render() const {}
+    virtual void OnCollisionEnter(const CollisionInfo& info) {}
 
 protected:
     Game& m_Game;

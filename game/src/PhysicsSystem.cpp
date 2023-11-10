@@ -1,6 +1,8 @@
 #include "PhysicsSystem.hpp"
 
 #include "Actor.hpp"
+#include "Debug.hpp"
+#include "Utils.hpp"
 
 #include <iostream>
 
@@ -15,7 +17,6 @@ PhysicsSystem::PhysicsSystem()
 uint32_t PhysicsSystem::CreatePhysicsComponent(Actor& actor)
 {
     m_Positions.push_back({});
-    m_Velocities.push_back({});
     m_Tags.push_back({});
     m_BoundingBoxes.push_back({});
     m_Actors.push_back(&actor);
@@ -40,7 +41,24 @@ void PhysicsSystem::SetBoundingBox(uint32_t id, const Box& bounding_box)
 
 void PhysicsSystem::CheckCollisions()
 {
-    std::cerr << "Implement CheckCollisions() in PhysicsSystem" << std::endl;
+    for(uint32_t i = 0; i < m_Positions.size(); i++)
+    {
+        const glm::vec3& pos1 = *m_Positions[i];
+        const Box& box1 = m_BoundingBoxes[i];
+
+        for(uint32_t j = 0; j < m_Positions.size(); j++)
+        {
+            if(i == j)
+                continue;
+            
+            if(Utils::Collides(pos1, box1, *m_Positions[j], m_BoundingBoxes[j]))
+            {
+                std::cerr << i;
+
+                // Make collision info for actor that we collided with
+            }
+        }
+    }
 }
 
 PhysicsComponent::PhysicsComponent(PhysicsSystem& system, Actor& actor)

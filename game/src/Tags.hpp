@@ -7,5 +7,5 @@ enum Tags
     kCannon,
     kInvader,
     kWall,
-    kBullet
+    kLaser
 };

@@ -23,7 +23,6 @@ public:
 
 private:
     std::vector<glm::vec3*> m_Positions;
-    std::vector<glm::vec3> m_Velocities;
     std::vector<uint32_t> m_Tags;
     std::vector<Box> m_BoundingBoxes;
     std::vector<Actor*> m_Actors;

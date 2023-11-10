@@ -128,19 +128,21 @@ namespace Utils
         box.SetMin({
             -static_cast<float>(bitmap.Width()) / 2.0f,
             -0.5f,
-            static_cast<float>(bitmap.Height()) / 2.0f
+            -static_cast<float>(bitmap.Height()) / 2.0f
         });
         box.SetMax({
             static_cast<float>(bitmap.Width()) / 2.0f,
             0.5f,
-            -static_cast<float>(bitmap.Height()) / 2.0f
+            static_cast<float>(bitmap.Height()) / 2.0f
         });
     }
 
-    bool Collides(const Box& box0, const Box& box1)
+    bool Collides(const glm::vec3& pos1, const Box& box1, const glm::vec3& pos2, const Box& box2)
     {
-        return !(box0.Max().x < box1.Min().x || box0.Min().x > box1.Max().x
-              && box0.Max().y < box1.Min().y || box0.Min().y > box1.Max().y
-              && box0.Max().z < box1.Min().z || box0.Min().z > box1.Max().z);
+        return !(
+               pos1.x + box1.Min().x > pos2.x + box2.Max().x || pos1.x + box1.Max().x < pos2.x + box2.Min().x
+            || pos1.y + box1.Min().y > pos2.y + box2.Max().y || pos1.y + box1.Max().y < pos2.y + box2.Min().y
+            || pos1.z + box1.Min().z > pos2.z + box2.Max().z || pos1.z + box1.Max().z < pos2.z + box2.Min().z
+        );
     }
 }

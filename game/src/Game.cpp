@@ -1,5 +1,6 @@
 #include "Game.hpp"
 
+#include "Laser.hpp"
 #include "Cannon.hpp"
 #include "Graphics.hpp"
 
@@ -47,12 +48,25 @@ void Game::Run()
 
 void Game::InitalizeRenderSystem()
 {
-    Bitmap3D* cannon_bitmap = m_RenderSystem.CreateBitmap("cannon_bitmap");
-    cannon_bitmap->CreateFromFile("../../assets/bitmaps/cannon");
-    cannon_bitmap->ReverseEachFrame();
-    
-    Mesh* cannon_mesh = m_RenderSystem.CreateMesh("cannon");
-    cannon_mesh->CreateFromBitmap(*cannon_bitmap);
+    // Cannon assets
+    {
+        Bitmap3D* cannon_bitmap = m_RenderSystem.CreateBitmap("cannon");
+        cannon_bitmap->CreateFromFile("../../assets/bitmaps/cannon");
+        cannon_bitmap->ReverseEachFrame();
+        
+        Mesh* cannon_mesh = m_RenderSystem.CreateMesh("cannon");
+        cannon_mesh->CreateFromBitmap(*cannon_bitmap);
+    }
+
+    // Laser assets
+    {
+        Bitmap3D* laser_bitmap = m_RenderSystem.CreateBitmap("laser");
+        laser_bitmap->CreateFromFile("../../assets/bitmaps/laser");
+        laser_bitmap->ReverseEachFrame();
+
+        Mesh* laser_mesh = m_RenderSystem.CreateMesh("laser");
+        laser_mesh->CreateFromBitmap(*laser_bitmap);
+    }
 
     m_Program = m_RenderSystem.CreateProgram("mesh");
     m_Program->CreateFromFiles("../../assets/shaders/mesh.vs", "../../assets/shaders/mesh.fs");
@@ -61,6 +75,8 @@ void Game::InitalizeRenderSystem()
 void Game::InitalizeActors()
 {
     m_Actors.emplace_back(new Cannon(*this));
+
+    m_Actors.emplace_back(new Laser(*this));
 }
 
 void Game::HandleInput()
@@ -80,7 +96,6 @@ void Game::HandleInput()
 
         m_Input.Update(e);
     }
-
 }
 
 void Game::Update()
@@ -92,7 +107,8 @@ void Game::Update()
     for(std::unique_ptr<Actor>& actor : m_Actors)
         actor->Update(m_DeltaTime);
     
-    // m_PhysicsSystem.CheckCollisions();
+    // TODO: Should be called every fixed time
+    m_PhysicsSystem.CheckCollisions();
 
     Graphics::CheckForErrors();
 }
