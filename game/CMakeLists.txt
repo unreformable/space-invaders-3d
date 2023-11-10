@@ -4,6 +4,7 @@ set(SRC_FILES
     src/Actor.cpp
     src/Cannon.cpp
     src/Game.cpp
+    src/PhysicsSystem.cpp
 )
 
 add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})

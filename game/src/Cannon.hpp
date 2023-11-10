@@ -1,6 +1,7 @@
 #include "Actor.hpp"
 
 #include "Mesh.hpp"
+#include "PhysicsSystem.hpp"
 #include "Program.hpp"
 
 
@@ -17,4 +18,5 @@ private:
     glm::vec3 m_Position;
     Mesh* m_Mesh;
     Program* m_Program;
+    PhysicsComponent m_Physics;
 };

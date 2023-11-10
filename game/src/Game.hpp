@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Input.hpp"
+#include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
 
 #include <memory>
@@ -15,9 +16,11 @@ class Game
 public:
     Game();
     ~Game();
+    
     void Run();
 
     RenderSystem* GetRenderSystem() { return &m_RenderSystem; }
+    PhysicsSystem* GetPhysicsSystem() { return &m_PhysicsSystem; }
     const Input* GetInput() { return &m_Input; }
 
 private:
@@ -33,6 +36,7 @@ private:
 
     Input m_Input;
 
+    PhysicsSystem m_PhysicsSystem;
     RenderSystem m_RenderSystem;
     Program* m_Program;
 

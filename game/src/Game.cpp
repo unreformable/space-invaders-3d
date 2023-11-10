@@ -46,13 +46,13 @@ void Game::Run()
 }
 
 void Game::InitalizeRenderSystem()
-{    
-    Bitmap3D cannon_bitmap;
-    cannon_bitmap.CreateFromFile("../../assets/bitmaps/cannon");
-    cannon_bitmap.ReverseEachFrame();
+{
+    Bitmap3D* cannon_bitmap = m_RenderSystem.CreateBitmap("cannon_bitmap");
+    cannon_bitmap->CreateFromFile("../../assets/bitmaps/cannon");
+    cannon_bitmap->ReverseEachFrame();
     
     Mesh* cannon_mesh = m_RenderSystem.CreateMesh("cannon");
-    cannon_mesh->CreateFromBitmap(cannon_bitmap);
+    cannon_mesh->CreateFromBitmap(*cannon_bitmap);
 
     m_Program = m_RenderSystem.CreateProgram("mesh");
     m_Program->CreateFromFiles("../../assets/shaders/mesh.vs", "../../assets/shaders/mesh.fs");
@@ -91,6 +91,8 @@ void Game::Update()
 
     for(std::unique_ptr<Actor>& actor : m_Actors)
         actor->Update(m_DeltaTime);
+    
+    // m_PhysicsSystem.CheckCollisions();
 
     Graphics::CheckForErrors();
 }
