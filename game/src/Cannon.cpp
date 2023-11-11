@@ -11,13 +11,13 @@
 
 
 
-Cannon::Cannon(Game& game)
+Cannon::Cannon(Game& game, const glm::vec3& position)
 :   Actor(game),
+    m_Position(position),
     m_Physics(*game.GetPhysicsSystem(), *this),
     m_ShootCooldown(1.6f),
     m_CurrentShootCooldown{}
 {
-    m_Position = glm::vec3(0, 0, -15);
     m_Mesh = game.GetRenderSystem()->GetMesh("cannon");
     m_Program = game.GetRenderSystem()->GetProgram("mesh");
 
@@ -45,7 +45,7 @@ void Cannon::Update(float dt)
         {
             m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.5f), {0, 0, -15}, kCannonLaser));
 
-            m_CurrentShootCooldown += m_ShootCooldown;
+            m_CurrentShootCooldown = m_ShootCooldown;
         }
     }
 

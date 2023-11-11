@@ -4,6 +4,7 @@ set(SRC_FILES
     src/Actor.cpp
     src/Cannon.cpp
     src/Game.cpp
+    src/Invader.cpp
     src/Laser.cpp
     src/PhysicsSystem.cpp
 )

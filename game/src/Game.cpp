@@ -3,6 +3,7 @@
 #include "Laser.hpp"
 #include "Cannon.hpp"
 #include "Graphics.hpp"
+#include "Invader.hpp"
 #include "Tag.hpp"
 
 #include "glm/ext/matrix_clip_space.hpp"
@@ -67,6 +68,16 @@ void Game::InitalizeRenderSystem()
         cannon_mesh->CreateFromBitmap(*cannon_bitmap);
     }
 
+    // Small invader assets
+    {
+        Bitmap3D* cannon_bitmap = m_RenderSystem.CreateBitmap("small_invader");
+        cannon_bitmap->CreateFromFile("../../assets/bitmaps/small_invader");
+        cannon_bitmap->ReverseEachFrame();
+        
+        Mesh* cannon_mesh = m_RenderSystem.CreateMesh("small_invader");
+        cannon_mesh->CreateFromBitmap(*cannon_bitmap);
+    }
+
     // Laser assets
     {
         Bitmap3D* laser_bitmap = m_RenderSystem.CreateBitmap("laser");
@@ -83,7 +94,10 @@ void Game::InitalizeRenderSystem()
 
 void Game::InitalizeActors()
 {
-    AddActor(new Cannon(*this));
+    AddActor(new Cannon(*this, {0, 0, 0}));
+    AddActor(new Invader(*this, {-15, 0, -50}));
+    AddActor(new Invader(*this, {-30, 0, -50}));
+    AddActor(new Invader(*this, {-45, 0, -50}));
 }
 
 void Game::HandleInput()
@@ -112,9 +126,7 @@ void Game::Update()
     m_LoopStartMs = loop_end_ms;
 
     for(Actor* actor : m_ActorsToAdd)
-    {
         m_Actors.push_back(actor);
-    }
     m_ActorsToAdd.clear();
 
     for(Actor* actor : m_Actors)
@@ -131,7 +143,7 @@ void Game::Render()
     Graphics::Clear();
 
     m_Program->Use();
-    m_Program->SetUniform("uView", glm::lookAtRH(glm::vec3(0, 20, 10), glm::vec3(0, 0, -30), glm::vec3(0, 1, 0)));
+    m_Program->SetUniform("uView", glm::lookAtRH(glm::vec3(0, 30, 35), glm::vec3(0, 0, -35), glm::vec3(0, 1, 0)));
     m_Program->SetUniform("uProj", glm::perspectiveRH(glm::radians(45.0f), 16.0f/9, 0.1f, 100.0f));
 
     for(Actor* actor : m_Actors)
