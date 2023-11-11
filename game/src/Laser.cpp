@@ -1,18 +1,19 @@
 #include "Laser.hpp"
 
 #include "Game.hpp"
-#include "Tags.hpp"
+#include "Tag.hpp"
 #include "Utils.hpp"
 
 #include "glm/ext/matrix_transform.hpp"
 
 
 
-Laser::Laser(Game& game)
+Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, Tag tag)
 :   Actor(game),
+    m_Position(position),
+    m_Velocity(velocity),
     m_Physics(*game.GetPhysicsSystem(), *this)
 {
-    m_Position = glm::vec3(0, 0, -15);
     m_Mesh = game.GetRenderSystem()->GetMesh("laser");
     m_Program = game.GetRenderSystem()->GetProgram("mesh");
 
@@ -21,12 +22,12 @@ Laser::Laser(Game& game)
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
-    m_Physics.SetTag(kInvader);
+    m_Physics.SetTag(tag);
 }
 
 void Laser::Update(float dt)
 {
-
+    m_Position += m_Velocity * dt;
 }
 
 void Laser::Render() const

@@ -29,7 +29,7 @@ void PhysicsSystem::SetPositionReference(uint32_t id, glm::vec3& position)
     m_Positions[id] = &position;
 }
 
-void PhysicsSystem::SetTag(uint32_t id, const uint32_t& tag)
+void PhysicsSystem::SetTag(uint32_t id, Tag tag)
 {
     m_Tags[id] = tag;
 }
@@ -53,9 +53,11 @@ void PhysicsSystem::CheckCollisions()
             
             if(Utils::Collides(pos1, box1, *m_Positions[j], m_BoundingBoxes[j]))
             {
-                std::cerr << i;
+                CollisionInfo info;
+                info.m_TargetTag = m_Tags[j];
+                info.m_Target = m_Actors[j];
 
-                // Make collision info for actor that we collided with
+                m_Actors[i]->OnCollisionEnter(info);
             }
         }
     }

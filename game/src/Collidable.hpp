@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Tag.hpp"
+
 #include <stdint.h>
 
 
@@ -9,7 +11,7 @@ class Actor;
 struct CollisionInfo
 {
     Actor* m_Target;
-    uint32_t m_Tag;
+    Tag m_TargetTag;
 };
 
 class Collidable

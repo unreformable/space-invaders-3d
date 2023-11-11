@@ -3,6 +3,7 @@
 #include "Laser.hpp"
 #include "Cannon.hpp"
 #include "Graphics.hpp"
+#include "Tag.hpp"
 
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -29,6 +30,9 @@ Game::Game()
 
 Game::~Game()
 {
+    for(Actor* actor : m_Actors)
+        delete actor;
+    
     Graphics::Terminate();
 }
 
@@ -44,6 +48,11 @@ void Game::Run()
         Update();
         Render();
     }
+}
+
+void Game::AddActor(Actor* actor)
+{
+    m_ActorsToAdd.push_back(actor);
 }
 
 void Game::InitalizeRenderSystem()
@@ -74,9 +83,7 @@ void Game::InitalizeRenderSystem()
 
 void Game::InitalizeActors()
 {
-    m_Actors.emplace_back(new Cannon(*this));
-
-    m_Actors.emplace_back(new Laser(*this));
+    AddActor(new Cannon(*this));
 }
 
 void Game::HandleInput()
@@ -104,10 +111,16 @@ void Game::Update()
     m_DeltaTime = static_cast<float>(loop_end_ms - m_LoopStartMs) / static_cast<float>(SDL_GetPerformanceFrequency());
     m_LoopStartMs = loop_end_ms;
 
-    for(std::unique_ptr<Actor>& actor : m_Actors)
+    for(Actor* actor : m_ActorsToAdd)
+    {
+        m_Actors.push_back(actor);
+    }
+    m_ActorsToAdd.clear();
+
+    for(Actor* actor : m_Actors)
         actor->Update(m_DeltaTime);
     
-    // TODO: Should be called every fixed time
+    // Should be called every fixed time (but we go for stable FPS, so it's not that important)
     m_PhysicsSystem.CheckCollisions();
 
     Graphics::CheckForErrors();
@@ -121,7 +134,7 @@ void Game::Render()
     m_Program->SetUniform("uView", glm::lookAtRH(glm::vec3(0, 20, 10), glm::vec3(0, 0, -30), glm::vec3(0, 1, 0)));
     m_Program->SetUniform("uProj", glm::perspectiveRH(glm::radians(45.0f), 16.0f/9, 0.1f, 100.0f));
 
-    for(std::unique_ptr<Actor>& actor : m_Actors)
+    for(Actor* actor : m_Actors)
         actor->Render();
     
     Graphics::Display();

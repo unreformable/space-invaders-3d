@@ -5,6 +5,7 @@
 #include "RenderSystem.hpp"
 
 #include <memory>
+#include <list>
 #include <vector>
 
 
@@ -19,9 +20,11 @@ public:
     
     void Run();
 
-    RenderSystem* GetRenderSystem() { return &m_RenderSystem; }
-    PhysicsSystem* GetPhysicsSystem() { return &m_PhysicsSystem; }
-    const Input* GetInput() { return &m_Input; }
+    void AddActor(Actor* actor);
+
+    inline RenderSystem* GetRenderSystem() { return &m_RenderSystem; }
+    inline PhysicsSystem* GetPhysicsSystem() { return &m_PhysicsSystem; }
+    inline const Input* GetInput() { return &m_Input; }
 
 private:
     void InitalizeRenderSystem();
@@ -32,7 +35,9 @@ private:
     void Render();
 
 private:
-    std::vector<std::unique_ptr<Actor>> m_Actors;
+    std::vector<Actor*> m_Actors;
+
+    std::list<Actor*> m_ActorsToAdd;
 
     Input m_Input;
 
