@@ -2,8 +2,6 @@
 
 #include "Tag.hpp"
 
-#include <stdint.h>
-
 
 
 class Actor;

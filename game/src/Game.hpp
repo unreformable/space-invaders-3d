@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Event.hpp"
 #include "Input.hpp"
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
@@ -22,6 +23,8 @@ public:
 
     void AddActor(Actor* actor);
 
+    void InvokeEvent(Event event);
+
     inline RenderSystem* GetRenderSystem() { return &m_RenderSystem; }
     inline PhysicsSystem* GetPhysicsSystem() { return &m_PhysicsSystem; }
     inline const Input* GetInput() { return &m_Input; }
@@ -38,6 +41,7 @@ private:
     std::vector<Actor*> m_Actors;
 
     std::list<Actor*> m_ActorsToAdd;
+    std::list<Event> m_EventsToInvoke;
 
     Input m_Input;
 

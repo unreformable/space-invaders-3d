@@ -2,11 +2,11 @@
 
 
 
-enum Tag
+enum class Tag
 {
-    kCannon = 0,
-    kInvader,
-    kWall,
-    kCannonLaser,
-    kInvaderLaser
+    Cannon = 0,
+    Invader,
+    Wall,
+    CannonLaser,
+    InvaderLaser
 };

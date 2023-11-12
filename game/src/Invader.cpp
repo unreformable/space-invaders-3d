@@ -11,9 +11,10 @@
 
 
 
-Invader::Invader(Game& game, const glm::vec3& position)
+Invader::Invader(Game& game, const glm::vec3& position, const glm::vec3& velocity)
 :   Actor(game),
     m_Position(position),
+    m_Velocity(velocity),
     m_Physics(*game.GetPhysicsSystem(), *this)
 {
     m_Mesh = game.GetRenderSystem()->GetMesh("small_invader");
@@ -24,12 +25,21 @@ Invader::Invader(Game& game, const glm::vec3& position)
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
-    m_Physics.SetTag(kInvader);
+    m_Physics.SetTag(Tag::Invader);
 }
 
 void Invader::Update(float dt)
 {
-    m_Position += glm::vec3(5, 0, 0) * dt;
+    m_Position += m_Velocity * dt;
+
+    if(m_Position.x >= 90.0f)
+    {
+        m_Game.InvokeEvent(Event::InvaderReachedRightSide);
+    }
+    else if(m_Position.x <= -90.0f)
+    {
+        m_Game.InvokeEvent(Event::InvaderReachedLeftSide);
+    }
 }
 
 void Invader::Render() const
@@ -41,4 +51,16 @@ void Invader::Render() const
 
     m_Mesh->Prepare();
     m_Mesh->Render(0);
+}
+
+void Invader::OnEvent(const Event& event)
+{
+    if(event == Event::InvaderReachedLeftSide)
+    {
+        m_Velocity = glm::abs(m_Velocity);
+    }
+    else if(event == Event::InvaderReachedRightSide)
+    {
+        m_Velocity = glm::abs(m_Velocity) * -1.0f;
+    }
 }

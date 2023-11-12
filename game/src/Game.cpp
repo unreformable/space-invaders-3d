@@ -56,6 +56,11 @@ void Game::AddActor(Actor* actor)
     m_ActorsToAdd.push_back(actor);
 }
 
+void Game::InvokeEvent(Event event)
+{
+    m_EventsToInvoke.push_back(event);
+}
+
 void Game::InitalizeRenderSystem()
 {
     // Cannon assets
@@ -95,9 +100,13 @@ void Game::InitalizeRenderSystem()
 void Game::InitalizeActors()
 {
     AddActor(new Cannon(*this, {0, 0, 0}));
-    AddActor(new Invader(*this, {-15, 0, -50}));
-    AddActor(new Invader(*this, {-30, 0, -50}));
-    AddActor(new Invader(*this, {-45, 0, -50}));
+    for(int z = 0; z < 5; z++)
+    {
+        for(int x = 0; x < 11; x++)
+        {
+            AddActor(new Invader(*this, {-30 + -13*x, 0, -70 + -13*z}, {12, 0, 0}));
+        }
+    }
 }
 
 void Game::HandleInput()
@@ -129,6 +138,11 @@ void Game::Update()
         m_Actors.push_back(actor);
     m_ActorsToAdd.clear();
 
+    for(Event event : m_EventsToInvoke)
+        for(Actor* actor : m_Actors)
+            actor->OnEvent(event);
+    m_EventsToInvoke.clear();
+
     for(Actor* actor : m_Actors)
         actor->Update(m_DeltaTime);
     
@@ -143,8 +157,8 @@ void Game::Render()
     Graphics::Clear();
 
     m_Program->Use();
-    m_Program->SetUniform("uView", glm::lookAtRH(glm::vec3(0, 30, 35), glm::vec3(0, 0, -35), glm::vec3(0, 1, 0)));
-    m_Program->SetUniform("uProj", glm::perspectiveRH(glm::radians(45.0f), 16.0f/9, 0.1f, 100.0f));
+    m_Program->SetUniform("uView", glm::lookAtRH(glm::vec3(0, 45, 35), glm::vec3(0, 0, -30), glm::vec3(0, 1, 0)));
+    m_Program->SetUniform("uProj", glm::perspectiveRH(glm::radians(45.0f), 16.0f/9, 0.1f, 250.0f));
 
     for(Actor* actor : m_Actors)
         actor->Render();
