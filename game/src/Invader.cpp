@@ -1,6 +1,7 @@
 #include "Invader.hpp"
 
 #include "Game.hpp"
+#include "InvadersManager.hpp"
 #include "Laser.hpp"
 #include "Tag.hpp"
 #include "Utils.hpp"
@@ -11,10 +12,10 @@
 
 
 
-Invader::Invader(Game& game, const glm::vec3& position, const glm::vec3& velocity)
+Invader::Invader(Game& game, const glm::vec3& position)
 :   Actor(game),
     m_Position(position),
-    m_Velocity(velocity),
+    m_Velocity{},
     m_Physics(*game.GetPhysicsSystem(), *this)
 {
     m_Mesh = game.GetRenderSystem()->GetMesh("small_invader");
@@ -32,13 +33,17 @@ void Invader::Update(float dt)
 {
     m_Position += m_Velocity * dt;
 
-    if(m_Position.x >= 90.0f)
+    if(m_Position.x <= InvadersManager::MIN_X)
     {
-        m_Game.InvokeEvent(Event::InvaderReachedRightSide);
+        Event event;
+        event.m_Type = EventType::InvaderReachedLeftSide;
+        m_Game.InvokeEvent(event);
     }
-    else if(m_Position.x <= -90.0f)
+    else if(m_Position.x >= InvadersManager::MAX_X)
     {
-        m_Game.InvokeEvent(Event::InvaderReachedLeftSide);
+        Event event;
+        event.m_Type = EventType::InvaderReachedRightSide;
+        m_Game.InvokeEvent(event);
     }
 }
 
@@ -55,12 +60,8 @@ void Invader::Render() const
 
 void Invader::OnEvent(const Event& event)
 {
-    if(event == Event::InvaderReachedLeftSide)
+    if(event.m_Type == EventType::InvadersChangeVelocity)
     {
-        m_Velocity = glm::abs(m_Velocity);
-    }
-    else if(event == Event::InvaderReachedRightSide)
-    {
-        m_Velocity = glm::abs(m_Velocity) * -1.0f;
+        m_Velocity = event.m_Data.m_Velocity;
     }
 }

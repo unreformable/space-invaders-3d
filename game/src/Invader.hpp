@@ -10,7 +10,7 @@
 class Invader: public Actor
 {
 public:
-    Invader(Game& game, const glm::vec3& position, const glm::vec3& velocity);
+    Invader(Game& game, const glm::vec3& position);
 
     virtual void Update(float dt);
     virtual void Render() const;

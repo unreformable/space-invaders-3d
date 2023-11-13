@@ -1,9 +1,27 @@
 #pragma once
 
+#include "glm/vec3.hpp"
 
 
-enum class Event
+
+enum class EventType
 {
+    InvaderReachedLeftSide,
     InvaderReachedRightSide,
-    InvaderReachedLeftSide
+    InvadersChangeVelocity
+};
+
+struct EventData
+{
+    union
+    {
+        float m_Value;
+        glm::vec3 m_Velocity;
+    };
+};
+
+struct Event
+{
+    EventType m_Type;
+    EventData m_Data;
 };

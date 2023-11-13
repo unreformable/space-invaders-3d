@@ -1,5 +1,6 @@
 #include "Game.hpp"
 
+#include "InvadersManager.hpp"
 #include "Laser.hpp"
 #include "Cannon.hpp"
 #include "Graphics.hpp"
@@ -100,13 +101,7 @@ void Game::InitalizeRenderSystem()
 void Game::InitalizeActors()
 {
     AddActor(new Cannon(*this, {0, 0, 0}));
-    for(int z = 0; z < 5; z++)
-    {
-        for(int x = 0; x < 11; x++)
-        {
-            AddActor(new Invader(*this, {-30 + -13*x, 0, -70 + -13*z}, {12, 0, 0}));
-        }
-    }
+    AddActor(new InvadersManager(*this, 0.9f));
 }
 
 void Game::HandleInput()
