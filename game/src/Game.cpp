@@ -10,6 +10,8 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
+#include <algorithm>
+
 
 
 Game::Game()
@@ -55,6 +57,11 @@ void Game::Run()
 void Game::AddActor(Actor* actor)
 {
     m_ActorsToAdd.push_back(actor);
+}
+
+void Game::RemoveActor(Actor* actor)
+{
+    m_ActorsToRemove.push_back(actor);
 }
 
 void Game::InvokeEvent(Event event)
@@ -132,6 +139,15 @@ void Game::Update()
     for(Actor* actor : m_ActorsToAdd)
         m_Actors.push_back(actor);
     m_ActorsToAdd.clear();
+
+    for(Actor* actor: m_ActorsToRemove)
+    {
+        auto it = std::find(std::begin(m_Actors), std::end(m_Actors), actor);
+        
+        delete actor;
+        m_Actors.erase(it);
+    }
+    m_ActorsToRemove.clear();
 
     for(Event event : m_EventsToInvoke)
         for(Actor* actor : m_Actors)

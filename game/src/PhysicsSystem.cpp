@@ -8,20 +8,37 @@
 
 
 
-
-PhysicsSystem::PhysicsSystem()
-:   m_NextId{}
-{
-}
-
-uint32_t PhysicsSystem::CreatePhysicsComponent(Actor& actor)
+uint32_t PhysicsSystem::AddPhysicsComponent(PhysicsComponent* component, Actor& actor)
 {
     m_Positions.push_back({});
     m_Tags.push_back({});
     m_BoundingBoxes.push_back({});
+    m_PhysicsComponents.push_back(component);
     m_Actors.push_back(&actor);
 
-    return m_NextId++;
+    return m_Positions.size() - 1;
+}
+
+void PhysicsSystem::RemovePhysicsComponent(uint32_t id)
+{
+    const int last_used_id = m_Positions.size() - 1;
+
+    if(last_used_id >= 0)
+    {
+        m_Positions[id] = m_Positions[last_used_id];
+        m_Tags[id] = m_Tags[last_used_id];
+        m_BoundingBoxes[id] = m_BoundingBoxes[last_used_id];
+        m_PhysicsComponents[id] = m_PhysicsComponents[last_used_id];
+        m_Actors[id] = m_Actors[last_used_id];
+
+        m_PhysicsComponents[id]->m_Id = id;
+    }
+
+    m_Positions.pop_back();
+    m_Tags.pop_back();
+    m_BoundingBoxes.pop_back();
+    m_PhysicsComponents.pop_back();
+    m_Actors.pop_back();
 }
 
 void PhysicsSystem::SetPositionReference(uint32_t id, glm::vec3& position)
@@ -66,5 +83,10 @@ void PhysicsSystem::CheckCollisions()
 PhysicsComponent::PhysicsComponent(PhysicsSystem& system, Actor& actor)
 :   m_System(system)
 {
-    m_Id = system.CreatePhysicsComponent(actor);
+    m_Id = system.AddPhysicsComponent(this, actor);
+}
+
+PhysicsComponent::~PhysicsComponent()
+{
+    m_System.RemovePhysicsComponent(m_Id);
 }

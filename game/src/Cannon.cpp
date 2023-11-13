@@ -43,7 +43,7 @@ void Cannon::Update(float dt)
     {
         if(m_CurrentShootCooldown <= 0.0f)
         {
-            m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.5f), {0, 0, -15}, Tag::CannonLaser));
+            m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.6f), {0, 0, -25}, Tag::CannonLaser));
 
             m_CurrentShootCooldown = m_ShootCooldown;
         }

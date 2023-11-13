@@ -8,13 +8,13 @@
 
 
 class Actor;
+class PhysicsComponent;
 
 class PhysicsSystem
 {
 public:
-    PhysicsSystem();
-
-    uint32_t CreatePhysicsComponent(Actor& actor);
+    uint32_t AddPhysicsComponent(PhysicsComponent* component, Actor& actor);
+    void RemovePhysicsComponent(uint32_t id);
     
     void CheckCollisions();
 
@@ -26,8 +26,8 @@ private:
     std::vector<glm::vec3*> m_Positions;
     std::vector<Tag> m_Tags;
     std::vector<Box> m_BoundingBoxes;
+    std::vector<PhysicsComponent*> m_PhysicsComponents;
     std::vector<Actor*> m_Actors;
-    uint32_t m_NextId;
 };
 
 class PhysicsComponent
@@ -37,6 +37,7 @@ public:
 
 public:
     PhysicsComponent(PhysicsSystem& system, Actor& actor);
+    ~PhysicsComponent();
 
     inline void SetPositionReference(glm::vec3& position) { m_System.SetPositionReference(m_Id, position); }
     inline void SetTag(Tag tag) { m_System.SetTag(m_Id, tag); }

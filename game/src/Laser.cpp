@@ -40,3 +40,8 @@ void Laser::Render() const
     m_Mesh->Prepare();
     m_Mesh->Render(0);
 }
+
+void Laser::OnCollisionEnter(const CollisionInfo& info)
+{
+    m_Game.RemoveActor(this);
+}

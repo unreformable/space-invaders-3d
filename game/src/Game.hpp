@@ -22,6 +22,7 @@ public:
     void Run();
 
     void AddActor(Actor* actor);
+    void RemoveActor(Actor* actor);
 
     void InvokeEvent(Event event);
 
@@ -41,6 +42,8 @@ private:
     std::vector<Actor*> m_Actors;
 
     std::list<Actor*> m_ActorsToAdd;
+    std::list<Actor*> m_ActorsToRemove;
+    
     std::list<Event> m_EventsToInvoke;
 
     Input m_Input;

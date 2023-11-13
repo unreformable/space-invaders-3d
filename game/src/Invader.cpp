@@ -58,6 +58,12 @@ void Invader::Render() const
     m_Mesh->Render(0);
 }
 
+void Invader::OnCollisionEnter(const CollisionInfo& info)
+{
+    if(info.m_TargetTag == Tag::CannonLaser)
+        m_Game.RemoveActor(this);
+}
+
 void Invader::OnEvent(const Event& event)
 {
     if(event.m_Type == EventType::InvadersChangeVelocity)

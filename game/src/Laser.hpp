@@ -14,6 +14,7 @@ public:
 
     virtual void Update(float dt);
     virtual void Render() const;
+    virtual void OnCollisionEnter(const CollisionInfo& info);
 
 private:
     glm::vec3 m_Position;
