@@ -8,7 +8,7 @@
 
 
 
-Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, uint8_t collision_layer)
+Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, uint8_t collision_layer, uint8_t collision_mask)
 :   Actor(game),
     m_Position(position),
     m_Velocity(velocity),
@@ -23,6 +23,7 @@ Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, u
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
     m_Physics.SetLayer(collision_layer);
+    m_Physics.SetMask(collision_mask);
 }
 
 void Laser::Update(float dt)
@@ -44,5 +45,4 @@ void Laser::Render() const
 void Laser::OnCollisionEnter(const CollisionInfo& info)
 {
     m_Game.RemoveActor(this);
-    m_Game.RemoveActor(info.m_Target);
 }

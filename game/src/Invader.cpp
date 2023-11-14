@@ -29,6 +29,7 @@ Invader::Invader(Game& game, const glm::vec3& position)
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
     m_Physics.SetMask(kTagCannonLaser);
+    m_Physics.SetLayer(kTagInvader);
 
     m_CurrentShootTimer = RNG::GetInRange(8.0f, 20.0f);
 }
@@ -71,7 +72,6 @@ void Invader::Render() const
 
 void Invader::OnCollisionEnter(const CollisionInfo& info)
 {
-    std::cerr << "ouch (invader)";
     m_Game.RemoveActor(this);
 }
 
@@ -85,5 +85,5 @@ void Invader::OnEvent(const Event& event)
 
 void Invader::Shoot()
 {
-    m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, 5.6f), {0, 0, 25}, kTagInvaderLaser));
+    m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, 5.6f), {0, 0, 25}, kTagInvaderLaser, kTagCannon | kTagCannonLaser));
 }

@@ -27,6 +27,7 @@ Cannon::Cannon(Game& game, const glm::vec3& position)
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
     m_Physics.SetMask(kTagInvaderLaser);
+    m_Physics.SetLayer(kTagCannon);
 }
 
 void Cannon::Update(float dt)
@@ -43,7 +44,7 @@ void Cannon::Update(float dt)
     {
         if(m_CurrentShootCooldown <= 0.0f)
         {
-            m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.6f), {0, 0, -25}, kTagCannonLaser));
+            m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.6f), {0, 0, -25}, kTagCannonLaser, kTagInvader | kTagInvaderLaser));
 
             m_CurrentShootCooldown = m_ShootCooldown;
         }
@@ -65,5 +66,5 @@ void Cannon::Render() const
 
 void Cannon::OnCollisionEnter(const CollisionInfo& info)
 {
-    std::cerr << "Ouch!";
+    m_Game.RemoveActor(this);
 }
