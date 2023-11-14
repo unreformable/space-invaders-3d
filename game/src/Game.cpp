@@ -1,11 +1,8 @@
 #include "Game.hpp"
 
-#include "InvadersManager.hpp"
-#include "Laser.hpp"
 #include "Cannon.hpp"
 #include "Graphics.hpp"
-#include "Invader.hpp"
-#include "Tag.hpp"
+#include "InvadersManager.hpp"
 
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -27,6 +24,9 @@ Game::Game()
     Graphics::Initalize(config);
 
     InitalizeRenderSystem();
+    
+    m_Root = new Actor(*this);
+
     InitalizeActors();
 
     m_LoopStartMs = SDL_GetPerformanceCounter();
@@ -34,8 +34,7 @@ Game::Game()
 
 Game::~Game()
 {
-    for(Actor* actor : m_Actors)
-        delete actor;
+    delete m_Root;
     
     Graphics::Terminate();
 }
@@ -52,16 +51,6 @@ void Game::Run()
         Update();
         Render();
     }
-}
-
-void Game::AddActor(Actor* actor)
-{
-    m_ActorsToAdd.push_back(actor);
-}
-
-void Game::RemoveActor(Actor* actor)
-{
-    m_ActorsToRemove.push_back(actor);
 }
 
 void Game::InvokeEvent(Event event)
@@ -107,8 +96,11 @@ void Game::InitalizeRenderSystem()
 
 void Game::InitalizeActors()
 {
-    AddActor(new Cannon(*this, {0, 0, 0}));
-    AddActor(new InvadersManager(*this, 0.9f));
+    Actor* cannon = new Cannon(*this, {0, 0, 0});
+    Actor* invaders_manager = new InvadersManager(*this, 0.9f);
+
+    cannon->SetParent(m_Root);
+    invaders_manager->SetParent(m_Root);
 }
 
 void Game::HandleInput()
@@ -136,26 +128,14 @@ void Game::Update()
     m_DeltaTime = static_cast<float>(loop_end_ms - m_LoopStartMs) / static_cast<float>(SDL_GetPerformanceFrequency());
     m_LoopStartMs = loop_end_ms;
 
-    for(Actor* actor : m_ActorsToAdd)
-        m_Actors.push_back(actor);
-    m_ActorsToAdd.clear();
-
-    for(Actor* actor: m_ActorsToRemove)
-    {
-        auto it = std::find(std::begin(m_Actors), std::end(m_Actors), actor);
-        
-        delete actor;
-        m_Actors.erase(it);
-    }
-    m_ActorsToRemove.clear();
+    m_Root->CheckRemoveChildren();
+    m_Root->CheckAddActors();
 
     for(Event event : m_EventsToInvoke)
-        for(Actor* actor : m_Actors)
-            actor->OnEvent(event);
+        m_Root->OnEvent(event);
     m_EventsToInvoke.clear();
 
-    for(Actor* actor : m_Actors)
-        actor->Update(m_DeltaTime);
+    m_Root->Update(m_DeltaTime);
     
     // Should be called every fixed time (but we go for stable FPS, so it's not that important)
     m_PhysicsSystem.CheckCollisions();
@@ -171,8 +151,7 @@ void Game::Render()
     m_Program->SetUniform("uView", glm::lookAtRH(glm::vec3(0, 45, 35), glm::vec3(0, 0, -30), glm::vec3(0, 1, 0)));
     m_Program->SetUniform("uProj", glm::perspectiveRH(glm::radians(45.0f), 16.0f/9, 0.1f, 250.0f));
 
-    for(Actor* actor : m_Actors)
-        actor->Render();
+    m_Root->Render();
     
     Graphics::Display();
 }

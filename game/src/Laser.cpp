@@ -27,11 +27,15 @@ Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, T
 
 void Laser::Update(float dt)
 {
+    Actor::Update(dt);
+    
     m_Position += m_Velocity * dt;
 }
 
 void Laser::Render() const
 {
+    Actor::Render();
+
     m_Program->Use();
     glm::mat4 world = glm::mat4(1.0f);
     world = glm::translate(world, m_Position);
@@ -43,5 +47,7 @@ void Laser::Render() const
 
 void Laser::OnCollisionEnter(const CollisionInfo& info)
 {
-    m_Game.RemoveActor(this);
+    Actor::OnCollisionEnter(info);
+
+    SetParent(nullptr);
 }

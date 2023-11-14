@@ -15,7 +15,8 @@ InvadersManager::InvadersManager(Game& game, float move_down_time)
     {
         for(int x = 0; x < 11; x++)
         {
-            game.AddActor(new Invader(game, {MIN_X+1 + 13*x, 0, -90 + -13*z}));
+            Actor* invader = new Invader(game, {MIN_X+1 + 13*x, 0, -90 + -13*z});
+            invader->SetParent(this);
         }
     }
 
@@ -27,6 +28,8 @@ InvadersManager::InvadersManager(Game& game, float move_down_time)
 
 void InvadersManager::Update(float dt)
 {
+    Actor::Update(dt);
+
     if(m_CurrentMoveDownTime > 0.0f)
     {
         m_CurrentMoveDownTime -= dt;
@@ -48,6 +51,8 @@ void InvadersManager::Update(float dt)
 
 void InvadersManager::OnEvent(const Event& event)
 {
+    Actor::OnEvent(event);
+    
     if(event.m_Type == EventType::InvaderReachedLeftSide)
     {
         if(m_InvadersShouldMoveRight == true)

@@ -31,6 +31,8 @@ Invader::Invader(Game& game, const glm::vec3& position)
 
 void Invader::Update(float dt)
 {
+    Actor::Update(dt);
+
     m_Position += m_Velocity * dt;
 
     if(m_Position.x <= InvadersManager::MIN_X)
@@ -49,6 +51,8 @@ void Invader::Update(float dt)
 
 void Invader::Render() const
 {
+    Actor::Render();
+
     m_Program->Use();
     glm::mat4 world = glm::mat4(1.0f);
     world = glm::translate(world, m_Position);
@@ -60,12 +64,18 @@ void Invader::Render() const
 
 void Invader::OnCollisionEnter(const CollisionInfo& info)
 {
+    Actor::OnCollisionEnter(info);
+
     if(info.m_TargetTag == Tag::CannonLaser)
-        m_Game.RemoveActor(this);
+    {
+        SetParent(nullptr);
+    }
 }
 
 void Invader::OnEvent(const Event& event)
 {
+    Actor::OnEvent(event);
+
     if(event.m_Type == EventType::InvadersChangeVelocity)
     {
         m_Velocity = event.m_Data.m_Velocity;
