@@ -4,5 +4,6 @@
 
 namespace RNG
 {
-    float GetInRange(float min, float max);
+    float FloatInRange(float min, float max);
+    int   IntInRange(int min, int max);
 }
