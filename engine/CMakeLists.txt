@@ -6,6 +6,7 @@ set(SRC_FILES
     src/Input.cpp
     src/Mesh.cpp
     src/Program.cpp
+    src/RNG.cpp
     src/Utils.cpp
 )
 

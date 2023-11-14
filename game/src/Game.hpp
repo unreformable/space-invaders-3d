@@ -5,7 +5,9 @@
 #include "PhysicsSystem.hpp"
 #include "RenderSystem.hpp"
 
+#include <memory>
 #include <list>
+#include <vector>
 
 
 
@@ -18,6 +20,9 @@ public:
     ~Game();
     
     void Run();
+
+    void AddActor(Actor* actor);
+    void RemoveActor(Actor* actor);
 
     void InvokeEvent(Event event);
 
@@ -34,7 +39,10 @@ private:
     void Render();
 
 private:
-    Actor* m_Root;
+    std::vector<Actor*> m_Actors;
+
+    std::list<Actor*> m_ActorsToAdd;
+    std::list<Actor*> m_ActorsToRemove;
     
     std::list<Event> m_EventsToInvoke;
 

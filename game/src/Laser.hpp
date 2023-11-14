@@ -10,7 +10,7 @@
 class Laser: public Actor
 {
 public:
-    Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, Tag tag);
+    Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, uint8_t collision_layer);
 
     virtual void Update(float dt);
     virtual void Render() const;

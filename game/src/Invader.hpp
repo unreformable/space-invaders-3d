@@ -18,9 +18,14 @@ public:
     virtual void OnEvent(const Event& event);
 
 private:
+    void Shoot();
+
+private:
     glm::vec3 m_Position;
     glm::vec3 m_Velocity;
     Mesh* m_Mesh;
     Program* m_Program;
     PhysicsComponent m_Physics;
+
+    float m_CurrentShootTimer;
 };

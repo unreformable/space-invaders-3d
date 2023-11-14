@@ -26,13 +26,11 @@ Cannon::Cannon(Game& game, const glm::vec3& position)
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
-    m_Physics.SetTag(Tag::Cannon);
+    m_Physics.SetMask(kTagInvaderLaser);
 }
 
 void Cannon::Update(float dt)
 {
-    Actor::Update(dt);
-
     if(m_Game.GetInput()->IsKeyPressed(SDL_SCANCODE_A))
     {
         m_Position.x -= 10.0f * dt;
@@ -45,8 +43,7 @@ void Cannon::Update(float dt)
     {
         if(m_CurrentShootCooldown <= 0.0f)
         {
-            Actor* laser = new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.6f), {0, 0, -25}, Tag::CannonLaser);
-            laser->SetParent(this);
+            m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.6f), {0, 0, -25}, kTagCannonLaser));
 
             m_CurrentShootCooldown = m_ShootCooldown;
         }
@@ -57,8 +54,6 @@ void Cannon::Update(float dt)
 
 void Cannon::Render() const
 {
-    Actor::Render();
-
     m_Program->Use();
     glm::mat4 world = glm::mat4(1.0f);
     world = glm::translate(world, m_Position);
@@ -70,10 +65,5 @@ void Cannon::Render() const
 
 void Cannon::OnCollisionEnter(const CollisionInfo& info)
 {
-    Actor::OnCollisionEnter(info);
-    
-    if(info.m_TargetTag == Tag::InvaderLaser)
-    {
-        std::cerr << "Ouch!";
-    }
+    std::cerr << "Ouch!";
 }

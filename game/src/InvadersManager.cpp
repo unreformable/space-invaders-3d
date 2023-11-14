@@ -8,15 +8,14 @@
 
 InvadersManager::InvadersManager(Game& game, float move_down_time)
 :   Actor(game),
-    m_MoveDownTime(move_down_time),
+    m_MoveDownTimer(move_down_time),
     m_InvadersShouldMoveRight(true)
 {
     for(int z = 0; z < 5; z++)
     {
         for(int x = 0; x < 11; x++)
         {
-            Actor* invader = new Invader(game, {MIN_X+1 + 13*x, 0, -90 + -13*z});
-            invader->SetParent(this);
+            game.AddActor(new Invader(game, {MIN_X+1 + 13*x, 0, -90 + -13*z}));
         }
     }
 
@@ -28,13 +27,11 @@ InvadersManager::InvadersManager(Game& game, float move_down_time)
 
 void InvadersManager::Update(float dt)
 {
-    Actor::Update(dt);
-
-    if(m_CurrentMoveDownTime > 0.0f)
+    if(m_CurrentMoveDownTimer > 0.0f)
     {
-        m_CurrentMoveDownTime -= dt;
+        m_CurrentMoveDownTimer -= dt;
 
-        if(m_CurrentMoveDownTime <= 0.0f)
+        if(m_CurrentMoveDownTimer <= 0.0f)
         {
             Event event;
             event.m_Type = EventType::InvadersChangeVelocity;
@@ -51,8 +48,6 @@ void InvadersManager::Update(float dt)
 
 void InvadersManager::OnEvent(const Event& event)
 {
-    Actor::OnEvent(event);
-    
     if(event.m_Type == EventType::InvaderReachedLeftSide)
     {
         if(m_InvadersShouldMoveRight == true)
@@ -63,7 +58,7 @@ void InvadersManager::OnEvent(const Event& event)
         event.m_Data.m_Velocity = {0, 0, 7};
         m_Game.InvokeEvent(event);
 
-        m_CurrentMoveDownTime = m_MoveDownTime;
+        m_CurrentMoveDownTimer = m_MoveDownTimer;
         m_InvadersShouldMoveRight = true;
     }
     if(event.m_Type == EventType::InvaderReachedRightSide)
@@ -76,7 +71,7 @@ void InvadersManager::OnEvent(const Event& event)
         event.m_Data.m_Velocity = {0, 0, 7};
         m_Game.InvokeEvent(event);
 
-        m_CurrentMoveDownTime = m_MoveDownTime;
+        m_CurrentMoveDownTimer = m_MoveDownTimer;
         m_InvadersShouldMoveRight = false;
     }
 }

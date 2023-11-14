@@ -19,12 +19,14 @@ public:
     void CheckCollisions();
 
     void SetPositionReference(uint32_t id, glm::vec3& position);
-    void SetTag(uint32_t id, Tag tag);
+    void SetLayer(uint32_t id, uint8_t layer);
+    void SetMask(uint32_t id, uint8_t mask);
     void SetBoundingBox(uint32_t id, const Box& bounding_box);    
 
 private:
     std::vector<glm::vec3*> m_Positions;
-    std::vector<Tag> m_Tags;
+    std::vector<uint32_t> m_Layers;
+    std::vector<uint32_t> m_Masks;
     std::vector<Box> m_BoundingBoxes;
     std::vector<PhysicsComponent*> m_PhysicsComponents;
     std::vector<Actor*> m_Actors;
@@ -40,7 +42,8 @@ public:
     ~PhysicsComponent();
 
     inline void SetPositionReference(glm::vec3& position) { m_System.SetPositionReference(m_Id, position); }
-    inline void SetTag(Tag tag) { m_System.SetTag(m_Id, tag); }
+    inline void SetLayer(uint32_t layer) { m_System.SetLayer(m_Id, layer); }
+    inline void SetMask(uint32_t mask) { m_System.SetMask(m_Id, mask); }
     inline void SetBoundingBox(const Box& bounding_box) { m_System.SetBoundingBox(m_Id, bounding_box); }
 
 private:

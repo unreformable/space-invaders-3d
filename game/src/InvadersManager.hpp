@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Actor.hpp"
+#include "Invader.hpp"
 
 
 
@@ -17,7 +18,7 @@ public:
     virtual void OnEvent(const Event& event);
 
 private:
-    const float m_MoveDownTime;
-    float m_CurrentMoveDownTime;
+    const float m_MoveDownTimer;
+    float m_CurrentMoveDownTimer;
     bool m_InvadersShouldMoveRight;
 };

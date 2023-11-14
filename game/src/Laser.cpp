@@ -8,7 +8,7 @@
 
 
 
-Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, Tag tag)
+Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, uint8_t collision_layer)
 :   Actor(game),
     m_Position(position),
     m_Velocity(velocity),
@@ -22,20 +22,16 @@ Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, T
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
-    m_Physics.SetTag(tag);
+    m_Physics.SetLayer(collision_layer);
 }
 
 void Laser::Update(float dt)
 {
-    Actor::Update(dt);
-    
     m_Position += m_Velocity * dt;
 }
 
 void Laser::Render() const
 {
-    Actor::Render();
-
     m_Program->Use();
     glm::mat4 world = glm::mat4(1.0f);
     world = glm::translate(world, m_Position);
@@ -47,7 +43,6 @@ void Laser::Render() const
 
 void Laser::OnCollisionEnter(const CollisionInfo& info)
 {
-    Actor::OnCollisionEnter(info);
-
-    SetParent(nullptr);
+    m_Game.RemoveActor(this);
+    m_Game.RemoveActor(info.m_Target);
 }

@@ -3,8 +3,10 @@
 #include "Game.hpp"
 #include "InvadersManager.hpp"
 #include "Laser.hpp"
+#include "RNG.hpp"
 #include "Tag.hpp"
 #include "Utils.hpp"
+
 
 #include "glm/ext/matrix_transform.hpp"
 
@@ -26,14 +28,21 @@ Invader::Invader(Game& game, const glm::vec3& position)
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
-    m_Physics.SetTag(Tag::Invader);
+    m_Physics.SetMask(kTagCannonLaser);
+
+    m_CurrentShootTimer = RNG::GetInRange(8.0f, 20.0f);
 }
 
 void Invader::Update(float dt)
 {
-    Actor::Update(dt);
-
     m_Position += m_Velocity * dt;
+
+    m_CurrentShootTimer -= dt;
+    if(m_CurrentShootTimer <= 0.0f)
+    {
+        Shoot();
+        m_CurrentShootTimer = RNG::GetInRange(8.0f, 20.0f);
+    }
 
     if(m_Position.x <= InvadersManager::MIN_X)
     {
@@ -51,8 +60,6 @@ void Invader::Update(float dt)
 
 void Invader::Render() const
 {
-    Actor::Render();
-
     m_Program->Use();
     glm::mat4 world = glm::mat4(1.0f);
     world = glm::translate(world, m_Position);
@@ -64,20 +71,19 @@ void Invader::Render() const
 
 void Invader::OnCollisionEnter(const CollisionInfo& info)
 {
-    Actor::OnCollisionEnter(info);
-
-    if(info.m_TargetTag == Tag::CannonLaser)
-    {
-        SetParent(nullptr);
-    }
+    std::cerr << "ouch (invader)";
+    m_Game.RemoveActor(this);
 }
 
 void Invader::OnEvent(const Event& event)
 {
-    Actor::OnEvent(event);
-
     if(event.m_Type == EventType::InvadersChangeVelocity)
     {
         m_Velocity = event.m_Data.m_Velocity;
     }
+}
+
+void Invader::Shoot()
+{
+    m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, 5.6f), {0, 0, 25}, kTagInvaderLaser));
 }

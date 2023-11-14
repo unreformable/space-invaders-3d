@@ -1,6 +1,7 @@
 project(space-invaders-3d)
 
 set(SRC_FILES
+    src/main.cpp
     src/Actor.cpp
     src/Cannon.cpp
     src/Game.cpp
@@ -10,7 +11,7 @@ set(SRC_FILES
     src/PhysicsSystem.cpp
 )
 
-add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC

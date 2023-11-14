@@ -9,7 +9,6 @@ class Actor;
 struct CollisionInfo
 {
     Actor* m_Target;
-    Tag m_TargetTag;
 };
 
 class Collidable
