@@ -6,6 +6,7 @@
 #include "Graphics.hpp"
 #include "Invader.hpp"
 #include "Tag.hpp"
+#include "Wall.hpp"
 
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -81,6 +82,16 @@ void Game::InitalizeRenderSystem()
         cannon_mesh->CreateFromBitmap(*cannon_bitmap);
     }
 
+    // Wall assets
+    {
+        Bitmap3D* wall_bitmap = m_RenderSystem.CreateBitmap("wall");
+        wall_bitmap->CreateFromFile("../../assets/bitmaps/wall");
+        wall_bitmap->ReverseEachFrame();
+        
+        Mesh* wall_mesh = m_RenderSystem.CreateMesh("wall");
+        wall_mesh->CreateFromBitmap(*wall_bitmap);
+    }
+
     // Small invader assets
     {
         Bitmap3D* cannon_bitmap = m_RenderSystem.CreateBitmap("small_invader");
@@ -108,6 +119,7 @@ void Game::InitalizeRenderSystem()
 void Game::InitalizeActors()
 {
     AddActor(new Cannon(*this, {0, 0, 0}));
+    AddActor(new Wall(*this, {0, 0, -30}));
     AddActor(new InvadersManager(*this, 0.9f));
 }
 

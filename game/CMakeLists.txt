@@ -9,6 +9,7 @@ set(SRC_FILES
     src/InvadersManager.cpp
     src/Laser.cpp
     src/PhysicsSystem.cpp
+    src/Wall.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})

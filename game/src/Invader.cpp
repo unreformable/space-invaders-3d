@@ -87,5 +87,5 @@ void Invader::OnEvent(const Event& event)
 
 void Invader::Shoot()
 {
-    m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, 5.6f), {0, 0, 25}, kTagInvaderLaser, kTagCannon | kTagCannonLaser));
+    m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, 5.6f), {0, 0, 25}, kTagInvaderLaser, kTagCannon | kTagWall | kTagCannonLaser));
 }

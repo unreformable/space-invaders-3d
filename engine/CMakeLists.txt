@@ -2,6 +2,7 @@ add_subdirectory(lib)
 
 set(SRC_FILES
     src/Bitmap3D.cpp
+    src/Box.cpp
     src/Graphics.cpp
     src/Input.cpp
     src/Mesh.cpp

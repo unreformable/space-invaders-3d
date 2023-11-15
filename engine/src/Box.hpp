@@ -11,6 +11,8 @@ class Box
 public:
     void CreateFromBitmap(const Bitmap3D& bitmap);
 
+    void Shrink(const glm::vec3& value);
+
     inline void SetMin(const glm::vec3& min) { m_Min = min; }
     inline void SetMax(const glm::vec3& max) { m_Max = max; }
 
