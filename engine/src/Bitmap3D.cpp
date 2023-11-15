@@ -22,6 +22,26 @@ Bitmap3D::~Bitmap3D()
         free(m_Data);
 }
 
+Bitmap3D::Bitmap3D(const Bitmap3D& other)
+:   m_Data((uint8_t*) malloc(other.m_PixelCount)),
+    m_Frames(other.m_Frames),
+    m_Width(other.m_Width),
+    m_Height(other.m_Height),
+    m_PixelCount(other.m_PixelCount)
+{
+}
+
+Bitmap3D& Bitmap3D::operator=(const Bitmap3D& other)
+{
+    m_Data = (uint8_t*) malloc(other.m_PixelCount);
+    m_Frames = other.m_Frames;
+    m_Width = other.m_Width;
+    m_Height = other.m_Height;
+    m_PixelCount = other.m_PixelCount;
+
+    return *this;
+}
+
 void Bitmap3D::CreateFromFile(const char* file_path)
 {
     this->~Bitmap3D();

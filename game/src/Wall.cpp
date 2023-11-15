@@ -13,12 +13,13 @@
 Wall::Wall(Game& game, const glm::vec3& position)
 :   Actor(game),
     m_Position(position),
+    m_Health(5),
     m_Physics(*game.GetPhysicsSystem(), *this)
 {
     m_Mesh = game.GetRenderSystem()->GetMesh("wall");
     m_Program = game.GetRenderSystem()->GetProgram("mesh");
 
-    Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("wall");
+    const Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("wall");
     Box bounding_box;
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     m_Physics.SetBoundingBox(bounding_box);
@@ -40,5 +41,9 @@ void Wall::Render() const
 
 void Wall::OnCollisionEnter(const CollisionInfo& info)
 {
-    
+    m_Health -= 1;
+    if(m_Health <= 0)
+    {
+        m_Game.RemoveActor(this);
+    }
 }

@@ -15,14 +15,14 @@ Cannon::Cannon(Game& game, const glm::vec3& position)
 :   Actor(game),
     m_Position(position),
     m_Physics(*game.GetPhysicsSystem(), *this),
-    m_ShootCooldown(1.0f),
+    m_ShootCooldown(0.9f),
     m_VelocityX(15.0f),
     m_CurrentShootCooldown{}
 {
     m_Mesh = game.GetRenderSystem()->GetMesh("cannon");
     m_Program = game.GetRenderSystem()->GetProgram("mesh");
 
-    Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("cannon");
+    const Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("cannon");
     Box bounding_box;
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     bounding_box.Shrink({2, 0, 2});
@@ -44,12 +44,7 @@ void Cannon::Update(float dt)
     }
     if(m_Game.GetInput()->IsKeyPressed(SDL_SCANCODE_W))
     {
-        if(m_CurrentShootCooldown <= 0.0f)
-        {
-            m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.6f), {0, 0, -25}, kTagCannonLaser, kTagInvader | kTagWall | kTagInvaderLaser));
-
-            m_CurrentShootCooldown = m_ShootCooldown;
-        }
+        TryShoot();
     }
 
     m_CurrentShootCooldown -= dt;
@@ -69,4 +64,14 @@ void Cannon::Render() const
 void Cannon::OnCollisionEnter(const CollisionInfo& info)
 {
     m_Game.RemoveActor(this);
+}
+
+void Cannon::TryShoot()
+{
+    if(m_CurrentShootCooldown <= 0.0f)
+    {
+        m_Game.AddActor(new Laser(m_Game, m_Position + glm::vec3(0, 0, -5.6f), {0, 0, -25}, kTagCannonLaser, kTagInvader | kTagWall | kTagInvaderLaser));
+
+        m_CurrentShootCooldown = m_ShootCooldown;
+    }
 }

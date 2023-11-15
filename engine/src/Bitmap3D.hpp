@@ -10,6 +10,8 @@ class Bitmap3D
 public:
     Bitmap3D();
     ~Bitmap3D();
+    Bitmap3D(const Bitmap3D& other);
+    Bitmap3D& operator=(const Bitmap3D& other);
 
     void CreateFromFile(const char* file_path);
     void ReverseEachFrame();
@@ -21,8 +23,6 @@ public:
     inline const uint8_t* Data() const { return m_Data; }
 
 private:
-    Bitmap3D(const Bitmap3D& other);
-    Bitmap3D& operator=(const Bitmap3D& other);
     Bitmap3D(Bitmap3D&& other);
     Bitmap3D& operator=(Bitmap3D&& other);
 

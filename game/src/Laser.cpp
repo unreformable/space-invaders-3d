@@ -17,7 +17,7 @@ Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, u
     m_Mesh = game.GetRenderSystem()->GetMesh("laser");
     m_Program = game.GetRenderSystem()->GetProgram("mesh");
 
-    Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("laser");
+    const Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("laser");
     Box bounding_box;
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     m_Physics.SetBoundingBox(bounding_box);

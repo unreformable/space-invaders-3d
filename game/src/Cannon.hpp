@@ -17,6 +17,9 @@ public:
     virtual void OnCollisionEnter(const CollisionInfo& info);
 
 private:
+    void TryShoot();
+
+private:
     glm::vec3 m_Position;
     Mesh* m_Mesh;
     Program* m_Program;

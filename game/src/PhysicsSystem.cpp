@@ -80,12 +80,15 @@ void PhysicsSystem::CheckCollisions()
             {
                 const uint8_t bit_result = m_Layers[i] & m_Masks[j];
 
+                // Check each bit for 1
                 for(uint8_t k = 0; k < 8; k++)
                 {
                     if(bit_result & (1 << k))
                     {
                         CollisionInfo info;
                         info.m_Target = m_Actors[j];
+                        info.m_TargetPosition = *m_Positions[j];
+                        info.m_TargetBoundingBox = m_BoundingBoxes[j];
 
                         m_Actors[i]->OnCollisionEnter(info);
                     }

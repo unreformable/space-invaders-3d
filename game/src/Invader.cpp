@@ -23,7 +23,7 @@ Invader::Invader(Game& game, const glm::vec3& position)
     m_Mesh = game.GetRenderSystem()->GetMesh("small_invader");
     m_Program = game.GetRenderSystem()->GetProgram("mesh");
 
-    Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("small_invader");
+    const Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("small_invader");
     Box bounding_box;
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
     m_Physics.SetBoundingBox(bounding_box);
