@@ -55,7 +55,7 @@ void InvadersManager::OnEvent(const Event& event)
         
         Event event;
         event.m_Type = EventType::InvadersChangeVelocity;
-        event.m_Data.m_Velocity = {0, 0, 7};
+        event.m_Data.m_Velocity = {0, 0, 9};
         m_Game.InvokeEvent(event);
 
         m_CurrentMoveDownTimer = m_MoveDownTimer;
@@ -68,7 +68,7 @@ void InvadersManager::OnEvent(const Event& event)
         
         Event event;
         event.m_Type = EventType::InvadersChangeVelocity;
-        event.m_Data.m_Velocity = {0, 0, 7};
+        event.m_Data.m_Velocity = {0, 0, 9};
         m_Game.InvokeEvent(event);
 
         m_CurrentMoveDownTimer = m_MoveDownTimer;

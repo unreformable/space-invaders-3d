@@ -8,8 +8,8 @@
 class InvadersManager: public Actor
 {
 public:
-    static constexpr const float MIN_X = -90.0f;
-    static constexpr const float MAX_X =  90.0f;
+    static constexpr const float MIN_X = -100.0f;
+    static constexpr const float MAX_X =  100.0f;
 
 public:
     InvadersManager(Game& game, float move_down_time);

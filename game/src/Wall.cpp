@@ -13,7 +13,7 @@
 Wall::Wall(Game& game, const glm::vec3& position)
 :   Actor(game),
     m_Position(position),
-    m_Health(5),
+    m_Health(9),
     m_Physics(*game.GetPhysicsSystem(), *this)
 {
     m_Mesh = game.GetRenderSystem()->GetMesh("wall");
@@ -22,6 +22,7 @@ Wall::Wall(Game& game, const glm::vec3& position)
     const Bitmap3D* bitmap = game.GetRenderSystem()->GetBitmap("wall");
     Box bounding_box;
     Utils::BoundingBoxFromBitmap(*bitmap, bounding_box);
+    bounding_box.Shrink({0, 0, 2});
     m_Physics.SetBoundingBox(bounding_box);
     m_Physics.SetPositionReference(m_Position);
     m_Physics.SetLayer(kTagWall);

@@ -31,7 +31,7 @@ Invader::Invader(Game& game, const glm::vec3& position)
     m_Physics.SetMask(kTagCannonLaser);
     m_Physics.SetLayer(kTagInvader);
 
-    m_CurrentShootTimer = RNG::FloatInRange(2.0f, 6.0f);
+    m_CurrentShootTimer = RNG::FloatInRange(2.5f, 6.0f);
 }
 
 void Invader::Update(float dt)
@@ -41,10 +41,10 @@ void Invader::Update(float dt)
     m_CurrentShootTimer -= dt;
     if(m_CurrentShootTimer <= 0.0f)
     {
-        if(RNG::IntInRange(0, 10) > 7)
+        if(RNG::IntInRange(0, 100) > 75)
             Shoot();
         
-        m_CurrentShootTimer = RNG::FloatInRange(2.0f, 6.0f);
+        m_CurrentShootTimer = RNG::FloatInRange(2.5f, 6.0f);
     }
 
     if(m_Position.x <= InvadersManager::MIN_X)

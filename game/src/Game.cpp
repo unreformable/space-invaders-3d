@@ -119,7 +119,10 @@ void Game::InitalizeRenderSystem()
 void Game::InitalizeActors()
 {
     AddActor(new Cannon(*this, {0, 0, 0}));
-    AddActor(new Wall(*this, {0, 0, -30}));
+    AddActor(new Wall(*this, {-60, 0, -22}));
+    AddActor(new Wall(*this, {-20, 0, -22}));
+    AddActor(new Wall(*this, { 20, 0, -22}));
+    AddActor(new Wall(*this, { 60, 0, -22}));
     AddActor(new InvadersManager(*this, 0.9f));
 }
 
@@ -179,9 +182,16 @@ void Game::Render()
 {
     Graphics::Clear();
 
+    const float fov = glm::radians(55.0f);
+    const glm::vec3 view_pos = glm::vec3(0, 42, 35);
+    const glm::vec3 look_at = glm::vec3(0, 0, -30);
+    const float aspect_ratio = 1280.0f/720.0f;
+    const float near_plane = 0.1f;
+    const float far_plane  = 250.0f;
+
     m_Program->Use();
-    m_Program->SetUniform("uView", glm::lookAtRH(glm::vec3(0, 45, 35), glm::vec3(0, 0, -30), glm::vec3(0, 1, 0)));
-    m_Program->SetUniform("uProj", glm::perspectiveRH(glm::radians(45.0f), 16.0f/9, 0.1f, 250.0f));
+    m_Program->SetUniform("uView", glm::lookAtRH(view_pos, look_at, glm::vec3(0, 1, 0)));
+    m_Program->SetUniform("uProj", glm::perspectiveRH(fov, aspect_ratio, near_plane, far_plane));
 
     for(Actor* actor : m_Actors)
         actor->Render();
