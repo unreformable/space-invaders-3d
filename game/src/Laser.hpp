@@ -17,6 +17,10 @@ public:
     virtual void OnCollisionEnter(const CollisionInfo& info);
 
 private:
+    void Die();
+
+private:
+    float m_ExistenceTimer;
     glm::vec3 m_Position;
     const glm::vec3 m_Velocity;
     Mesh* m_Mesh;

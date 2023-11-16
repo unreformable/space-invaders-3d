@@ -9,8 +9,8 @@
 InvadersManager::InvadersManager(Game& game)
 :   Actor(game),
     m_InvadersVelocityX(12),
-    m_InvadersVelocityZ(9),
-    m_MoveDownTimer(0.9f),
+    m_InvadersVelocityZ(8),
+    m_MoveDownTimer(0.8f),
     m_InvadersMoveRight(true)
 {
     const float x_start = MIN_X+1;

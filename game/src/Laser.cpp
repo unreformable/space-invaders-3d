@@ -10,6 +10,7 @@
 
 Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, uint8_t collision_layer, uint8_t collision_mask)
 :   Actor(game),
+    m_ExistenceTimer(15.0f),
     m_Position(position),
     m_Velocity(velocity),
     m_Physics(*game.GetPhysicsSystem(), *this)
@@ -29,6 +30,12 @@ Laser::Laser(Game& game, const glm::vec3& position, const glm::vec3& velocity, u
 void Laser::Update(float dt)
 {
     m_Position += m_Velocity * dt;
+
+    m_ExistenceTimer -= dt;
+    if(m_ExistenceTimer <= 0.0f)
+    {
+        Die();
+    }
 }
 
 void Laser::Render() const
@@ -43,6 +50,11 @@ void Laser::Render() const
 }
 
 void Laser::OnCollisionEnter(const CollisionInfo& info)
+{
+    Die();
+}
+
+void Laser::Die()
 {
     m_Game.RemoveActor(this);
 }
