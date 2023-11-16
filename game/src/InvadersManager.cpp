@@ -6,23 +6,34 @@
 
 
 
-InvadersManager::InvadersManager(Game& game, float move_down_time)
+InvadersManager::InvadersManager(Game& game)
 :   Actor(game),
-    m_MoveDownTimer(move_down_time),
-    m_InvadersShouldMoveRight(true)
+    m_InvadersVelocityX(12),
+    m_InvadersVelocityZ(9),
+    m_MoveDownTimer(0.9f),
+    m_InvadersMoveRight(true)
 {
+    const float x_start = MIN_X+1;
+    const float y_start = 0;
+    const float z_start = -100;
+
     for(int z = 0; z < 5; z++)
     {
         for(int x = 0; x < 11; x++)
         {
-            game.AddActor(new Invader(game, {MIN_X+1 + 13*x, 0, -90 + -13*z}));
+            const float x_adjust =  13 * x;
+            const float z_adjust = -13 * z;
+
+            const glm::vec3 invader_pos = glm::vec3(
+                x_start + x_adjust,
+                y_start,
+                z_start + z_adjust
+            );
+            game.AddActor(new Invader(game, invader_pos));
         }
     }
 
-    Event event;
-    event.m_Type = EventType::InvadersChangeVelocity;
-    event.m_Data.m_Velocity = {12, 0, 0};
-    m_Game.InvokeEvent(event);
+    InvadersMoveRight();
 }
 
 void InvadersManager::Update(float dt)
@@ -33,45 +44,63 @@ void InvadersManager::Update(float dt)
 
         if(m_CurrentMoveDownTimer <= 0.0f)
         {
-            Event event;
-            event.m_Type = EventType::InvadersChangeVelocity;
-
-            if(m_InvadersShouldMoveRight)
-                event.m_Data.m_Velocity = {12, 0, 0};
+            if(m_InvadersMoveRight)
+                InvadersMoveRight();
             else
-                event.m_Data.m_Velocity = {-12, 0, 0};
-            
-            m_Game.InvokeEvent(event);
+                InvadersMoveLeft();
         }
     }
 }
 
 void InvadersManager::OnEvent(const Event& event)
 {
+    if(event.m_Type == EventType::InvaderDied)
+    {
+        m_InvadersVelocityX += 0.2f;
+        m_InvadersVelocityZ += 0.15f;
+    }
     if(event.m_Type == EventType::InvaderReachedLeftSide)
     {
-        if(m_InvadersShouldMoveRight == true)
+        if(m_InvadersMoveRight == true)
             return;
-        
-        Event event;
-        event.m_Type = EventType::InvadersChangeVelocity;
-        event.m_Data.m_Velocity = {0, 0, 9};
-        m_Game.InvokeEvent(event);
+
+        InvadersMoveDown();
 
         m_CurrentMoveDownTimer = m_MoveDownTimer;
-        m_InvadersShouldMoveRight = true;
+        m_InvadersMoveRight = true;
     }
-    if(event.m_Type == EventType::InvaderReachedRightSide)
+    else if(event.m_Type == EventType::InvaderReachedRightSide)
     {
-        if(m_InvadersShouldMoveRight == false)
+        if(m_InvadersMoveRight == false)
             return;
         
-        Event event;
-        event.m_Type = EventType::InvadersChangeVelocity;
-        event.m_Data.m_Velocity = {0, 0, 9};
-        m_Game.InvokeEvent(event);
+        InvadersMoveDown();
 
         m_CurrentMoveDownTimer = m_MoveDownTimer;
-        m_InvadersShouldMoveRight = false;
+        m_InvadersMoveRight = false;
     }
+}
+
+void InvadersManager::InvadersMoveRight()
+{
+    Event event;
+    event.m_Type = EventType::InvadersChangeVelocity;
+    event.m_Data.m_Velocity = {m_InvadersVelocityX, 0, 0};
+    m_Game.InvokeEvent(event);
+}
+
+void InvadersManager::InvadersMoveLeft()
+{
+    Event event;
+    event.m_Type = EventType::InvadersChangeVelocity;
+    event.m_Data.m_Velocity = {-m_InvadersVelocityX, 0, 0};
+    m_Game.InvokeEvent(event);
+}
+
+void InvadersManager::InvadersMoveDown()
+{
+    Event event;
+    event.m_Type = EventType::InvadersChangeVelocity;
+    event.m_Data.m_Velocity = {0, 0, m_InvadersVelocityZ};
+    m_Game.InvokeEvent(event);
 }

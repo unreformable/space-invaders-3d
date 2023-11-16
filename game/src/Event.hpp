@@ -8,7 +8,8 @@ enum class EventType
 {
     InvaderReachedLeftSide,
     InvaderReachedRightSide,
-    InvadersChangeVelocity
+    InvadersChangeVelocity,
+    InvaderDied
 };
 
 struct EventData

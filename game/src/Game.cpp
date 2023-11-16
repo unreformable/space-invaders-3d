@@ -123,7 +123,7 @@ void Game::InitalizeActors()
     AddActor(new Wall(*this, {-20, 0, -22}));
     AddActor(new Wall(*this, { 20, 0, -22}));
     AddActor(new Wall(*this, { 60, 0, -22}));
-    AddActor(new InvadersManager(*this, 0.9f));
+    AddActor(new InvadersManager(*this));
 }
 
 void Game::HandleInput()
@@ -158,9 +158,10 @@ void Game::Update()
     for(Actor* actor: m_ActorsToRemove)
     {
         auto it = std::find(std::begin(m_Actors), std::end(m_Actors), actor);
-        
         delete actor;
-        m_Actors.erase(it);
+
+        *it = m_Actors.back();
+        m_Actors.pop_back();
     }
     m_ActorsToRemove.clear();
 
@@ -182,8 +183,8 @@ void Game::Render()
 {
     Graphics::Clear();
 
-    const float fov = glm::radians(55.0f);
-    const glm::vec3 view_pos = glm::vec3(0, 42, 35);
+    const float fov = glm::radians(70.0f);
+    const glm::vec3 view_pos = glm::vec3(0, 42, 30);
     const glm::vec3 look_at = glm::vec3(0, 0, -30);
     const float aspect_ratio = 1280.0f/720.0f;
     const float near_plane = 0.1f;

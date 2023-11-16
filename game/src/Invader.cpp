@@ -74,7 +74,7 @@ void Invader::Render() const
 
 void Invader::OnCollisionEnter(const CollisionInfo& info)
 {
-    m_Game.RemoveActor(this);
+    Die();
 }
 
 void Invader::OnEvent(const Event& event)
@@ -83,6 +83,15 @@ void Invader::OnEvent(const Event& event)
     {
         m_Velocity = event.m_Data.m_Velocity;
     }
+}
+
+void Invader::Die()
+{
+    Event event;
+    event.m_Type = EventType::InvaderDied;
+    m_Game.InvokeEvent(event);
+    
+    m_Game.RemoveActor(this);
 }
 
 void Invader::Shoot()

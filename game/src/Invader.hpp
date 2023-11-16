@@ -18,6 +18,7 @@ public:
     virtual void OnEvent(const Event& event);
 
 private:
+    void Die();
     void Shoot();
 
 private:
