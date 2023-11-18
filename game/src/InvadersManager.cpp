@@ -11,7 +11,10 @@ InvadersManager::InvadersManager(Game& game, const glm::vec3& position)
     m_InvadersVelocityX(12),
     m_InvadersVelocityZ(8),
     m_MoveDownTimer(0.8f),
-    m_InvadersMoveRight(true)
+    m_InvadersMoveRight(true),
+    m_InvadersChangeFrameTimer(1.4f),
+    m_CurrentInvadersChangeFrameTimer(m_InvadersChangeFrameTimer),
+    m_CurrentInvaderFrame(0)
 {
     const float x_start = position.x;
     const float y_start = position.y;
@@ -48,6 +51,25 @@ void InvadersManager::Update(float dt)
                 InvadersMoveRight();
             else
                 InvadersMoveLeft();
+        }
+    }
+
+    if(m_CurrentInvadersChangeFrameTimer > 0.0f)
+    {
+        m_CurrentInvadersChangeFrameTimer -= dt;
+
+        if(m_CurrentInvadersChangeFrameTimer <= 0.0f)
+        {
+            m_CurrentInvadersChangeFrameTimer = m_InvadersChangeFrameTimer;
+
+            m_CurrentInvaderFrame++;
+            m_CurrentInvaderFrame %= 2;     // 0-1 range
+
+            Event event;
+            event.m_Type = EventType::InvadersChangeFrame;
+            event.m_Data.m_MeshFrame = m_CurrentInvaderFrame;
+
+            m_Game.InvokeEvent(event);
         }
     }
 }

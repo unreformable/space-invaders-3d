@@ -10,14 +10,15 @@ enum class EventType
     InvaderReachedRightSide,
     InvadersChangeVelocity,
     InvaderDied,
-    UfoDied
+    UfoDied,
+    InvadersChangeFrame
 };
 
 struct EventData
 {
     union
     {
-        float m_Value;
+        uint32_t m_MeshFrame;
         glm::vec3 m_Velocity;
     };
 };

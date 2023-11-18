@@ -18,7 +18,8 @@ Invader::Invader(Game& game, const glm::vec3& position)
 :   Actor(game),
     m_Position(position),
     m_Velocity{},
-    m_Physics(*game.GetPhysicsSystem(), *this)
+    m_Physics(*game.GetPhysicsSystem(), *this),
+    m_CurrentFrame(0)
 {
     m_Mesh = game.GetRenderSystem()->GetMesh("small_invader");
     m_Program = game.GetRenderSystem()->GetProgram("mesh");
@@ -69,7 +70,7 @@ void Invader::Render() const
     m_Program->SetUniform("uWorld", world);
 
     m_Mesh->Prepare();
-    m_Mesh->Render(0);
+    m_Mesh->Render(m_CurrentFrame);
 }
 
 void Invader::OnCollisionEnter(const CollisionInfo& info)
@@ -82,6 +83,10 @@ void Invader::OnEvent(const Event& event)
     if(event.m_Type == EventType::InvadersChangeVelocity)
     {
         m_Velocity = event.m_Data.m_Velocity;
+    }
+    else if(event.m_Type == EventType::InvadersChangeFrame)
+    {
+        m_CurrentFrame = event.m_Data.m_MeshFrame;
     }
 }
 

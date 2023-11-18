@@ -29,4 +29,6 @@ private:
     PhysicsComponent m_Physics;
 
     float m_CurrentShootTimer;
+
+    uint32_t m_CurrentFrame;
 };

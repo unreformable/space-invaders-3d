@@ -29,4 +29,8 @@ private:
     const float m_MoveDownTimer;
     float m_CurrentMoveDownTimer;
     bool m_InvadersMoveRight;
+
+    float m_InvadersChangeFrameTimer;
+    float m_CurrentInvadersChangeFrameTimer;
+    uint32_t m_CurrentInvaderFrame;
 };
