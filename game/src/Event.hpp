@@ -9,7 +9,8 @@ enum class EventType
     InvaderReachedLeftSide,
     InvaderReachedRightSide,
     InvadersChangeVelocity,
-    InvaderDied
+    InvaderDied,
+    UfoDied
 };
 
 struct EventData

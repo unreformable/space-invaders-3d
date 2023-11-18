@@ -6,6 +6,7 @@
 #include "Graphics.hpp"
 #include "Invader.hpp"
 #include "Tag.hpp"
+#include "UfoSpawner.hpp"
 #include "Wall.hpp"
 
 #include "glm/ext/matrix_clip_space.hpp"
@@ -92,6 +93,16 @@ void Game::InitalizeRenderSystem()
         wall_mesh->CreateFromBitmap(*wall_bitmap);
     }
 
+    // Ufo assets
+    {
+        Bitmap3D* wall_bitmap = m_RenderSystem.CreateBitmap("ufo");
+        wall_bitmap->CreateFromFile("../../assets/bitmaps/ufo");
+        wall_bitmap->ReverseEachFrame();
+        
+        Mesh* wall_mesh = m_RenderSystem.CreateMesh("ufo");
+        wall_mesh->CreateFromBitmap(*wall_bitmap);
+    }
+
     // Small invader assets
     {
         Bitmap3D* cannon_bitmap = m_RenderSystem.CreateBitmap("small_invader");
@@ -119,11 +130,12 @@ void Game::InitalizeRenderSystem()
 void Game::InitalizeActors()
 {
     AddActor(new Cannon(*this, {0, 0, 0}));
-    AddActor(new Wall(*this, {-60, 0, -22}));
-    AddActor(new Wall(*this, {-20, 0, -22}));
-    AddActor(new Wall(*this, { 20, 0, -22}));
-    AddActor(new Wall(*this, { 60, 0, -22}));
-    AddActor(new InvadersManager(*this));
+    AddActor(new Wall(*this, {-60, 0, -18}));
+    AddActor(new Wall(*this, {-20, 0, -18}));
+    AddActor(new Wall(*this, { 20, 0, -18}));
+    AddActor(new Wall(*this, { 60, 0, -18}));
+    AddActor(new InvadersManager(*this, {InvadersManager::MIN_X+1, 0, -100}));
+    AddActor(new UfoSpawner(*this, {InvadersManager::MIN_X-20, 0, -160}, {8, 0, 0}, -InvadersManager::MIN_X+20));
 }
 
 void Game::HandleInput()
@@ -183,9 +195,9 @@ void Game::Render()
 {
     Graphics::Clear();
 
-    const float fov = glm::radians(70.0f);
-    const glm::vec3 view_pos = glm::vec3(0, 42, 30);
-    const glm::vec3 look_at = glm::vec3(0, 0, -30);
+    const float fov = glm::radians(60.0f);
+    const glm::vec3 view_pos = glm::vec3(0, 75, 20);
+    const glm::vec3 look_at = glm::vec3(0, 0, -45);
     const float aspect_ratio = 1280.0f/720.0f;
     const float near_plane = 0.1f;
     const float far_plane  = 250.0f;

@@ -12,7 +12,7 @@ public:
     static constexpr const float MAX_X =  105.0f;
 
 public:
-    InvadersManager(Game& game);
+    InvadersManager(Game& game, const glm::vec3& position);
 
     virtual void Update(float dt);
     virtual void OnEvent(const Event& event);

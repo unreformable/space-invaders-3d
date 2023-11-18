@@ -9,6 +9,8 @@ set(SRC_FILES
     src/InvadersManager.cpp
     src/Laser.cpp
     src/PhysicsSystem.cpp
+    src/Ufo.cpp
+    src/UfoSpawner.cpp
     src/Wall.cpp
 )
 

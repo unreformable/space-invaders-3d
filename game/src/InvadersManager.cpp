@@ -6,16 +6,16 @@
 
 
 
-InvadersManager::InvadersManager(Game& game)
+InvadersManager::InvadersManager(Game& game, const glm::vec3& position)
 :   Actor(game),
     m_InvadersVelocityX(12),
     m_InvadersVelocityZ(8),
     m_MoveDownTimer(0.8f),
     m_InvadersMoveRight(true)
 {
-    const float x_start = MIN_X+1;
-    const float y_start = 0;
-    const float z_start = -100;
+    const float x_start = position.x;
+    const float y_start = position.y;
+    const float z_start = position.z;
 
     for(int z = 0; z < 5; z++)
     {
